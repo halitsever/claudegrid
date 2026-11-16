@@ -17,6 +17,9 @@ export default defineConfig({
   head: [
     ["meta", { name: "keywords", content: "claude code, claude, anthropic, ai coding agent, multi agent, parallel agents, git worktree, tmux, konsole, kitty, wezterm, split terminal, cli" }],
     ["meta", { name: "author", content: "Halit Sever" }],
+    ["link", { rel: "preconnect", href: "https://fonts.googleapis.com" }],
+    ["link", { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" }],
+    ["link", { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" }],
     ["link", { rel: "icon", type: "image/svg+xml", href: base + "logo.svg" }],
     ["link", { rel: "apple-touch-icon", href: base + "logo-180.png" }],
     ["meta", { name: "theme-color", content: "#e8573c" }],
