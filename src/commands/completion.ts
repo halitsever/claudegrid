@@ -1,7 +1,7 @@
 import { BACKENDS } from "../config.js";
 import { CliError } from "../ui.js";
 
-export const SUBCOMMANDS = ["ui", "desktop", "init", "doctor", "presets", "worktrees", "completion", "help"];
+export const SUBCOMMANDS = ["ui", "desktop", "init", "doctor", "update", "presets", "worktrees", "completion", "help"];
 export const LAUNCH_FLAGS = ["--layout", "--panes", "--backend", "--worktrees", "--no-worktrees", "--model", "--prompt", "--config", "--cwd", "--name", "--command", "--no-keep-shell", "--no-new-tab", "--new-tab", "--trust", "--no-trust", "--dry-run", "--json", "--detach", "--help", "--version"];
 const LAYOUTS = ["1x2", "2x1", "2x2", "3x1", "3x2", "3x3", "4x2"];
 
@@ -40,6 +40,7 @@ _claudegrid() {
     'desktop:add claudegrid to your app menu'
     'init:create a .claudegrid.json in this project'
     'doctor:check claude, terminals and config'
+    'update:install the latest claudegrid from npm'
     'presets:list presets from your configs'
     'worktrees:list or clean claudegrid git worktrees'
     'completion:print a shell completion script'

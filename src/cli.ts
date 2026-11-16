@@ -7,6 +7,7 @@ import { installDesktop, uninstallDesktop } from "./commands/desktop.js";
 import { doctor } from "./commands/doctor.js";
 import { init } from "./commands/init.js";
 import { launch } from "./commands/launch.js";
+import { update } from "./commands/update.js";
 import { cleanWorktrees, listWorktrees } from "./commands/worktrees.js";
 import { loadConfigs, presetNames } from "./config.js";
 import { runPane } from "./pane.js";
@@ -76,6 +77,7 @@ ${b("commands")}
   desktop install         add claudegrid to your app menu ${d("(desktop uninstall removes it)")}
   init [--force]          create .claudegrid.json with example panes and presets
   doctor                  check claude, terminals and config files
+  update [--check]        install the latest claudegrid from npm
   presets [--names]       list presets from your user and project config
   worktrees [list]        show claudegrid worktrees with their state
   worktrees clean         remove them ${d("(--force, --keep-branches, --dry-run)")}
@@ -122,6 +124,10 @@ async function main(argv: string[]): Promise<number> {
     }
     case "doctor":
       return doctor(process.cwd());
+    case "update": {
+      const { values } = parse(rest, { check: { type: "boolean" } });
+      return update(version, { check: Boolean(values.check) });
+    }
     case "presets": {
       const { values } = parse(rest, { names: { type: "boolean" } });
       const sources = loadConfigs(process.cwd());

@@ -90,3 +90,11 @@ test("desktop entry quotes paths for the Exec key", async () => {
   assert.match(entry, /^Exec="\/usr\/bin\/node" "\/home\/a b\/cli.js" "ui"$/m);
   assert.match(entry, /^Icon=claudegrid$/m);
 });
+
+test("update compares versions numerically", async () => {
+  const { compareVersions } = await import("../dist/commands/update.js");
+  assert.equal(compareVersions("1.10.0", "1.9.3"), 1);
+  assert.equal(compareVersions("v1.4.0", "1.4.0"), 0);
+  assert.equal(compareVersions("1.3.0", "1.4.0-beta.1"), -1);
+  assert.ok(cli(["--help"]).stdout.includes("update"));
+});
