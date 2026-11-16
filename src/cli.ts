@@ -1,0 +1,199 @@
+#!/usr/bin/env node
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { parseArgs, type ParseArgsConfig } from "node:util";
+import { completion, SUBCOMMANDS } from "./commands/completion.js";
+import { doctor } from "./commands/doctor.js";
+import { init } from "./commands/init.js";
+import { launch } from "./commands/launch.js";
+import { cleanWorktrees, listWorktrees } from "./commands/worktrees.js";
+import { loadConfigs, presetNames } from "./config.js";
+import { runPane } from "./pane.js";
+import { CliError, didYouMean, printError, style } from "./ui.js";
+
+const version = (JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as { version: string }).version;
+
+const LAUNCH_OPTIONS = {
+  layout: { type: "string", short: "l" },
+  panes: { type: "string", short: "n" },
+  backend: { type: "string", short: "b" },
+  worktrees: { type: "boolean", short: "w" },
+  "no-worktrees": { type: "boolean" },
+  model: { type: "string", short: "m" },
+  prompt: { type: "string", short: "p", multiple: true },
+  config: { type: "string", short: "c" },
+  cwd: { type: "string", short: "C" },
+  name: { type: "string", short: "t" },
+  command: { type: "string" },
+  "keep-shell": { type: "boolean" },
+  "no-keep-shell": { type: "boolean" },
+  "dry-run": { type: "boolean" },
+  json: { type: "boolean" },
+  detach: { type: "boolean", short: "d" },
+  help: { type: "boolean", short: "h" },
+  version: { type: "boolean", short: "v" },
+} as const satisfies ParseArgsConfig["options"];
+
+function help(): string {
+  const b = style.bold;
+  const d = style.dim;
+  return `${style.brand("▦ claudegrid")} ${d(`v${version}`)}  run several Claude Code sessions side by side
+
+${b("usage")}
+  claudegrid [preset] [options] [-- claude flags]
+  claudegrid <command>
+
+${b("options")}
+  -l, --layout <grid>     COLSxROWS like 3x2, or a pane count like 6 ${d("(default 2x2)")}
+  -n, --panes <count>     same as --layout <count>
+  -p, --prompt <text>     prompt for the next pane, repeat for more panes
+  -m, --model <model>     model for every pane, e.g. opus or sonnet
+  -w, --worktrees         give every pane its own git worktree and branch
+      --no-worktrees      turn worktrees off when the config turns them on
+  -b, --backend <name>    auto, konsole, tmux, kitty or wezterm ${d("(default auto)")}
+  -C, --cwd <dir>         run from this directory
+  -c, --config <file>     use this config file instead of .claudegrid.json
+  -t, --name <name>       name for the window, tmux session and worktree group
+      --command <cmd>     run another program instead of claude
+      --no-keep-shell     close the pane when claude exits
+  -d, --detach            start the tmux session without attaching
+      --dry-run           print the plan and commands, open nothing
+      --json              print the plan as JSON
+  -h, --help              show this help
+  -v, --version           show the version
+
+${b("commands")}
+  init [--force]          create .claudegrid.json with example panes and presets
+  doctor                  check claude, terminals and config files
+  presets [--names]       list presets from your user and project config
+  worktrees [list]        show claudegrid worktrees with their state
+  worktrees clean         remove them ${d("(--force, --keep-branches, --dry-run)")}
+  completion <shell>      print bash, zsh or fish completion
+
+${b("examples")}
+  claudegrid                              ${d("4 panes in the current directory")}
+  claudegrid -l 3x2 -m opus               ${d("6 panes on Opus")}
+  claudegrid -p "fix lint" -p "write tests"   ${d("a different task per pane")}
+  claudegrid -w -n 3                      ${d("3 agents on separate branches")}
+  claudegrid review                       ${d("the review preset from .claudegrid.json")}
+  claudegrid -- --continue                ${d("pass flags to every claude")}
+
+${d("docs: https://halitsever.github.io/claudegrid/")}
+`;
+}
+
+function parse<T extends ParseArgsConfig["options"]>(args: string[], options: T) {
+  try {
+    return parseArgs({ args, options, allowPositionals: true, strict: true });
+  } catch (error) {
+    const message = (error as Error).message.replace(/\. To specify a positional.*$/s, "");
+    const flag = /'(-[^']+)'/.exec(message)?.[1];
+    const known = Object.keys(options ?? {}).map((k) => `--${k}`);
+    throw new CliError(message.charAt(0).toLowerCase() + message.slice(1), (flag && didYouMean(flag, known)) ?? "Claude Code flags go after --, for example: claudegrid -- --continue");
+  }
+}
+
+async function main(argv: string[]): Promise<number> {
+  const dash = argv.indexOf("--");
+  const own = dash === -1 ? argv : argv.slice(0, dash);
+  const passthrough = dash === -1 ? [] : argv.slice(dash + 1);
+  const [first, ...rest] = own;
+
+  switch (first) {
+    case "pane": {
+      const { values } = parse(rest, { spec: { type: "string" }, index: { type: "string" } });
+      return runPane({ spec: values.spec, index: values.index === undefined ? undefined : Number(values.index) });
+    }
+    case "init": {
+      const { values } = parse(rest, { force: { type: "boolean" }, cwd: { type: "string", short: "C" } });
+      init({ cwd: resolve(values.cwd ?? "."), force: Boolean(values.force) });
+      return 0;
+    }
+    case "doctor":
+      return doctor(process.cwd());
+    case "presets": {
+      const { values } = parse(rest, { names: { type: "boolean" } });
+      const sources = loadConfigs(process.cwd());
+      const names = presetNames(sources);
+      if (values.names) {
+        process.stdout.write(names.join("\n") + (names.length ? "\n" : ""));
+        return 0;
+      }
+      if (!names.length) {
+        process.stdout.write(`no presets yet. Add some under "presets" in .claudegrid.json, or run ${style.bold("claudegrid init")}\n`);
+        return 0;
+      }
+      const width = Math.max(...names.map((n) => n.length));
+      for (const name of names) {
+        const preset = sources.project?.data.presets?.[name] ?? sources.user?.data.presets?.[name];
+        const from = sources.project?.data.presets?.[name] ? "project" : "user";
+        process.stdout.write(`${style.bold(name.padEnd(width))}  ${preset?.description ?? ""} ${style.dim(`(${from})`)}\n`);
+      }
+      return 0;
+    }
+    case "worktrees": {
+      const { values, positionals } = parse(rest, { force: { type: "boolean" }, "keep-branches": { type: "boolean" }, "dry-run": { type: "boolean" } });
+      const action = positionals[0] ?? "list";
+      if (action === "list") listWorktrees(process.cwd());
+      else if (action === "clean") cleanWorktrees(process.cwd(), { force: Boolean(values.force), keepBranches: Boolean(values["keep-branches"]), dryRun: Boolean(values["dry-run"]) });
+      else throw new CliError(`unknown worktrees action "${action}"`, "use `claudegrid worktrees list` or `claudegrid worktrees clean`");
+      return 0;
+    }
+    case "completion":
+      process.stdout.write(completion(rest[0]));
+      return 0;
+    case "help":
+      process.stdout.write(help());
+      return 0;
+  }
+
+  const { values, positionals } = parse(own, LAUNCH_OPTIONS);
+  if (values.help) {
+    process.stdout.write(help());
+    return 0;
+  }
+  if (values.version) {
+    process.stdout.write(`${version}\n`);
+    return 0;
+  }
+  if (positionals.length > 1) throw new CliError(`expected at most one preset, got ${positionals.join(", ")}`, 'quote prompts and pass them with -p, e.g. -p "fix the tests"');
+  const preset = positionals[0];
+  const cwd = resolve(values.cwd ?? ".");
+  const known = preset ? presetNames(loadConfigs(cwd, values.config)) : [];
+  if (preset && !known.includes(preset)) {
+    const hint = didYouMean(preset, [...SUBCOMMANDS, ...known]);
+    if (hint) throw new CliError(`unknown command or preset "${preset}"`, hint);
+  }
+  if (values.layout && values.panes) throw new CliError("use either --layout or --panes, not both");
+  if (values.worktrees && values["no-worktrees"]) throw new CliError("--worktrees and --no-worktrees cancel each other out");
+
+  await launch({
+    cwd,
+    preset,
+    config: values.config,
+    layout: values.layout ?? values.panes,
+    backend: values.backend,
+    worktrees: values.worktrees ? true : values["no-worktrees"] ? false : undefined,
+    model: values.model,
+    command: values.command,
+    keepShell: values["keep-shell"] ? true : values["no-keep-shell"] ? false : undefined,
+    name: values.name,
+    prompts: values.prompt ?? [],
+    extraArgs: passthrough,
+    dryRun: Boolean(values["dry-run"]),
+    json: Boolean(values.json),
+    detach: Boolean(values.detach),
+  });
+  return 0;
+}
+
+// Piping into `head` closes stdout early. That is not an error worth a stack trace.
+process.stdout.on("error", (error: NodeJS.ErrnoException) => {
+  if (error.code === "EPIPE") process.exit(0);
+  throw error;
+});
+
+main(process.argv.slice(2)).then(
+  (code) => (process.exitCode = code),
+  (error) => (process.exitCode = printError(error)),
+);

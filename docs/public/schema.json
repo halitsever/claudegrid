@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://halitsever.github.io/claudegrid/schema.json",
+  "title": "claudegrid config",
+  "description": "Project (.claudegrid.json) or user (~/.config/claudegrid/config.json) config for claudegrid.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "layout": {
+      "type": "string",
+      "pattern": "^\\s*(\\d+\\s*[xX×]\\s*\\d+|\\d+)\\s*$",
+      "description": "Grid as COLSxROWS (\"3x2\") or a pane count (\"6\"). Wins over a numeric `panes`.",
+      "examples": [
+        "2x2",
+        "3x2",
+        "1x3",
+        "6"
+      ]
+    },
+    "panes": {
+      "description": "How many panes to open, or one entry per pane in reading order (left to right, top to bottom).",
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        },
+        {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/pane"
+          }
+        }
+      ]
+    },
+    "backend": {
+      "enum": [
+        "auto",
+        "konsole",
+        "tmux",
+        "kitty",
+        "wezterm"
+      ],
+      "default": "auto",
+      "description": "Terminal that hosts the grid. `auto` prefers the terminal you are in."
+    },
+    "worktrees": {
+      "type": "boolean",
+      "default": false,
+      "description": "Give every pane its own git worktree and `claudegrid/...` branch, next to the repo in `<repo>.claudegrid/`."
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Passed to every pane as `--model`.",
+      "examples": [
+        "opus",
+        "sonnet",
+        "haiku"
+      ]
+    },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Extra Claude Code flags for every pane. Args from each config layer add up."
+    },
+    "command": {
+      "type": "string",
+      "minLength": 1,
+      "default": "claude",
+      "description": "Program each pane runs."
+    },
+    "keepShell": {
+      "type": "boolean",
+      "default": true,
+      "description": "Drop into your shell when the program exits instead of closing the pane."
+    },
+    "dir": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Base directory for every pane, relative to this file."
+    },
+    "presets": {
+      "type": "object",
+      "description": "Named variations, started with `claudegrid <name>`.",
+      "propertyNames": {
+        "pattern": "^[A-Za-z0-9][\\w.-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/preset"
+      }
+    }
+  },
+  "$defs": {
+    "pane": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "description": "Shorthand for a pane with only a prompt."
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Pane title, and the worktree branch name when worktrees are on. Must be unique."
+            },
+            "dir": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Directory for this pane, relative to the config file."
+            },
+            "prompt": {
+              "type": "string",
+              "minLength": 1,
+              "description": "First message sent to Claude in this pane."
+            },
+            "model": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Overrides the grid model for this pane."
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Extra Claude Code flags for this pane only."
+            }
+          }
+        }
+      ]
+    },
+    "preset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "layout": {
+          "type": "string",
+          "pattern": "^\\s*(\\d+\\s*[xX×]\\s*\\d+|\\d+)\\s*$",
+          "description": "Grid as COLSxROWS (\"3x2\") or a pane count (\"6\"). Wins over a numeric `panes`.",
+          "examples": [
+            "2x2",
+            "3x2",
+            "1x3",
+            "6"
+          ]
+        },
+        "panes": {
+          "description": "How many panes to open, or one entry per pane in reading order (left to right, top to bottom).",
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16
+            },
+            {
+              "type": "array",
+              "maxItems": 16,
+              "items": {
+                "$ref": "#/$defs/pane"
+              }
+            }
+          ]
+        },
+        "backend": {
+          "enum": [
+            "auto",
+            "konsole",
+            "tmux",
+            "kitty",
+            "wezterm"
+          ],
+          "default": "auto",
+          "description": "Terminal that hosts the grid. `auto` prefers the terminal you are in."
+        },
+        "worktrees": {
+          "type": "boolean",
+          "default": false,
+          "description": "Give every pane its own git worktree and `claudegrid/...` branch, next to the repo in `<repo>.claudegrid/`."
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Passed to every pane as `--model`.",
+          "examples": [
+            "opus",
+            "sonnet",
+            "haiku"
+          ]
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Extra Claude Code flags for every pane. Args from each config layer add up."
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "default": "claude",
+          "description": "Program each pane runs."
+        },
+        "keepShell": {
+          "type": "boolean",
+          "default": true,
+          "description": "Drop into your shell when the program exits instead of closing the pane."
+        },
+        "dir": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Base directory for every pane, relative to this file."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Shown by `claudegrid presets`."
+        }
+      }
+    }
+  }
+}
