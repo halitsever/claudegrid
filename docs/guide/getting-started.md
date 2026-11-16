@@ -27,6 +27,11 @@ claudegrid opens several [Claude Code](https://claude.com/claude-code) sessions 
 npm install -g claudegrid
 ```
 
+```sh [Debian / Ubuntu]
+curl -fLO https://github.com/halitsever/claudegrid/releases/latest/download/claudegrid.deb
+sudo apt install ./claudegrid.deb
+```
+
 ```sh [script]
 curl -fsSL https://raw.githubusercontent.com/halitsever/claudegrid/main/install.sh | bash
 ```
@@ -38,6 +43,8 @@ cd claudegrid
 ```
 
 :::
+
+The `.deb` package needs Node.js 20 or newer from your distro (Ubuntu 25.04 and later, Debian 13) or from [NodeSource](https://github.com/nodesource/distributions). It adds shell completion for bash, zsh and fish and puts claudegrid in your app menu.
 
 The install script uses npm under the hood. When your global npm folder needs root, it installs into `~/.local` instead. It also removes the first, bash-only version of claudegrid if it finds one.
 
@@ -95,7 +102,8 @@ Completion also suggests the preset names from your config.
 ## Uninstall
 
 ```sh
-npm uninstall -g claudegrid
+npm uninstall -g claudegrid      # npm or the install script
+sudo apt remove claudegrid       # .deb
 ```
 
 Next: [Usage](./usage)
