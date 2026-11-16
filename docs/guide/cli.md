@@ -1,6 +1,6 @@
 ---
 title: CLI reference
-description: Every claudegrid command and option, from launching grids to init, doctor, presets, worktrees and shell completion.
+description: Every claudegrid command and option, from launching grids to init, doctor, update, presets, worktrees and shell completion.
 ---
 
 # CLI reference
@@ -57,6 +57,10 @@ Creates `.claudegrid.json` at the root of the git repo, or in the current direct
 ## claudegrid doctor
 
 Checks Node.js, Claude Code, git, every terminal backend and your config files. It exits with 1 when claudegrid cannot launch.
+
+## claudegrid update
+
+Installs the latest claudegrid from npm into the same place the current one lives. `--check` only prints whether a newer version exists. Copies installed with apt or the AUR are updated by those instead.
 
 ## claudegrid presets
 
