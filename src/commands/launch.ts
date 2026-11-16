@@ -21,6 +21,7 @@ export interface LaunchOptions {
   model?: string;
   command?: string;
   keepShell?: boolean;
+  newTab?: boolean;
   name?: string;
   prompts: string[];
   extraArgs: string[];
@@ -33,7 +34,7 @@ function cliLayer(o: LaunchOptions): GridConfig {
   if (o.backend && !BACKENDS.includes(o.backend as BackendName)) {
     throw new CliError(`unknown backend "${o.backend}"`, didYouMean(o.backend, BACKENDS) ?? `pick one of ${BACKENDS.join(", ")}`);
   }
-  return { layout: o.layout, backend: o.backend as BackendName | undefined, worktrees: o.worktrees, model: o.model, command: o.command, keepShell: o.keepShell };
+  return { layout: o.layout, backend: o.backend as BackendName | undefined, worktrees: o.worktrees, model: o.model, command: o.command, keepShell: o.keepShell, newTab: o.newTab };
 }
 
 export function planFromOptions(o: LaunchOptions): LaunchPlan {
@@ -48,6 +49,7 @@ export function planJson(plan: LaunchPlan, backend: Backend) {
     layout: describeGrid(plan.grid),
     columns: plan.grid.columns,
     keepShell: plan.keepShell,
+    newTab: plan.newTab,
     panes: plan.panes.map((p) => ({ index: p.index + 1, name: p.name, title: p.title, column: p.col + 1, row: p.row + 1, cwd: p.cwd, command: p.argv, worktree: p.worktree })),
   };
 }
@@ -67,6 +69,7 @@ export async function dryRunSteps(plan: LaunchPlan, backend: Backend): Promise<s
     paneCommand: (i) => ["claudegrid", "pane", "--spec", "<spec>.json", ...(i === undefined ? [] : ["--index", String(i)])],
     detach: true,
     interactive: false,
+    newTab: plan.newTab,
     dryRun: true,
     run: recorder,
   };
@@ -80,7 +83,7 @@ export interface LaunchResult {
 }
 
 /** Creates worktrees, writes the launch spec and hands the plan to the backend. */
-export async function executeLaunch(plan: LaunchPlan, backend: Backend, options: { detach: boolean; interactive: boolean }): Promise<LaunchResult> {
+export async function executeLaunch(plan: LaunchPlan, backend: Backend, options: { detach: boolean; interactive: boolean; newTab?: boolean }): Promise<LaunchResult> {
   const notes: string[] = [];
   for (const pane of plan.panes) {
     if (!pane.worktree || !plan.repoRoot) continue;
@@ -97,6 +100,7 @@ export async function executeLaunch(plan: LaunchPlan, backend: Backend, options:
     paneCommand: (i) => [...self, "pane", "--spec", specPath, ...(i === undefined ? [] : ["--index", String(i)])],
     detach: options.detach,
     interactive: options.interactive,
+    newTab: options.newTab ?? plan.newTab,
     dryRun: false,
     run: (command, args) => runOrThrow(command, args, `${command} ${args[0] ?? ""}`.trim()),
   });

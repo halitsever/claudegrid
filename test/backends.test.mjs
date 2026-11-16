@@ -44,6 +44,17 @@ test("the konsole profile keeps the user's settings but runs claudegrid", () => 
   assert.equal(buildProfile("/x"), "[General]\nName=claudegrid\nCommand=/x\n");
 });
 
+test("tab profiles carry their own name and tab title", () => {
+  const profile = buildProfile("/run/tab.sh", "[General]\nLocalTabTitleFormat=%d : %n\n", { name: "claudegrid", tabTitle: "▦ claudegrid" });
+  assert.match(profile, /LocalTabTitleFormat=▦ claudegrid\nRemoteTabTitleFormat=▦ claudegrid/);
+  assert.doesNotMatch(profile, /%d : %n/);
+});
+
+test("konsole tab tickets are keyed by bus name and session", async () => {
+  const { konsoleTabTicketPath } = await import("../dist/spec.js");
+  assert.match(konsoleTabTicketPath(":1.42", "7"), /konsole-tab-_1\.42-7\.json$/);
+});
+
 test("konsole panes find their index from KONSOLE_DBUS_SESSION", () => {
   const spec = { order: [0, 1, 2, 4, 3, 5] };
   assert.equal(konsolePaneIndex(spec, { KONSOLE_DBUS_SESSION: "/Sessions/1" }), 0);

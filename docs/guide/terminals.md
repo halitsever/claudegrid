@@ -12,12 +12,14 @@ claudegrid has four backends. With `backend: "auto"`, the default, it picks:
 
 `claudegrid doctor` shows which backends work on your machine and which one `auto` would use.
 
-| Backend | Opens | Exact grid | Needs |
-| --- | --- | --- | --- |
-| `konsole` | a new Konsole window | yes | `konsole`, `qdbus6`, a D-Bus session |
-| `tmux` | a new session, or a new window when you are in tmux | yes | tmux 3.1+ |
-| `kitty` | a new kitty window | kitty's grid layout | `kitty` |
-| `wezterm` | a new window in the running WezTerm | yes | WezTerm running |
+| Backend | Opens | With `--no-new-tab` | Exact grid | Needs |
+| --- | --- | --- | --- | --- |
+| `konsole` | a new tab when you run it in Konsole, otherwise a new window | a new window | yes | `konsole`, `qdbus6`, a D-Bus session |
+| `tmux` | a new tmux window when you are in tmux, otherwise a new session | a separate session it switches to | yes | tmux 3.1+ |
+| `kitty` | a new kitty window | the same | kitty's grid layout | `kitty` |
+| `wezterm` | a new tab when you run it in WezTerm, otherwise a new window | a new window | yes | WezTerm running |
+
+The [desktop app](./app) always opens a new window, since it does not run inside a terminal.
 
 ## How a pane starts
 
@@ -27,17 +29,29 @@ This means claudegrid never types commands into your shell, and prompts with quo
 
 ## Konsole
 
-claudegrid starts `konsole --separate` with a temporary profile, then builds the grid over Konsole's D-Bus API:
+### New tab
+
+In Konsole, claudegrid talks to the window it runs in over D-Bus. It opens a tab with the `claudegrid` profile and splits it into the grid. Each pane in that tab runs `claudegrid pane --konsole-tab`, which waits for a small note claudegrid writes once it knows the pane's session number. That is how every pane gets its own task.
+
+The `claudegrid` profile lives in `~/.local/share/konsole/claudegrid.profile` and copies your default profile, so fonts and colors stay the same. The `.deb` and AUR packages also ship it in `/usr/share/konsole`. Konsole only reads profiles at startup: when the window you are in started before the profile existed, claudegrid opens a new window for that one launch and asks you to restart Konsole.
+
+Only the splits inside the new tab are resized, your other tabs stay as they are.
+
+### New window
+
+With `--no-new-tab`, or outside Konsole, claudegrid starts `konsole --separate` with a temporary profile, then builds the grid over Konsole's D-Bus API:
 
 1. split the first view left and right until there are enough columns
 2. split each column top and bottom until it has its rows
 3. resize every splitter so all panes are the same size
 
-The temporary profile copies your default Konsole profile, so fonts and colors stay the same. Nothing is written to `~/.local/share/konsole`.
+The temporary profile copies your default Konsole profile, so fonts and colors stay the same.
 
 Every Konsole session knows its own number from `KONSOLE_DBUS_SESSION`, and claudegrid uses that to tell each pane which task it has.
 
 ## tmux
+
+Inside tmux, claudegrid opens a new window in your current session. With `--no-new-tab` it creates a separate session and switches you to it.
 
 Outside tmux, claudegrid creates a session called `claudegrid-<name>` and attaches to it. With `-d` it stays in the background:
 
@@ -45,8 +59,6 @@ Outside tmux, claudegrid creates a session called `claudegrid-<name>` and attach
 claudegrid -b tmux -d
 tmux attach -t claudegrid-my-app
 ```
-
-Inside tmux, it opens a new window in your current session instead.
 
 Pane names are shown in the pane borders. Splits use percentages, so the grid stays even at any terminal size.
 
@@ -56,4 +68,4 @@ claudegrid writes a kitty session file and starts `kitty --session`. kitty's `gr
 
 ## WezTerm
 
-claudegrid uses `wezterm cli` to open a window in the WezTerm that is already running, then splits it with the same percentages as tmux. Start WezTerm first.
+claudegrid uses `wezterm cli` to add a tab to the WezTerm window it runs in, or a new window when it runs elsewhere or with `--no-new-tab`, then splits it with the same percentages as tmux. Start WezTerm first.

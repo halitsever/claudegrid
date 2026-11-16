@@ -44,6 +44,7 @@ The `$schema` line gives you autocomplete and checks in VS Code, JetBrains IDEs 
 | `backend` | string | `"auto"` | `auto`, `konsole`, `tmux`, `kitty` or `wezterm` |
 | `command` | string | `"claude"` | program each pane runs |
 | `keepShell` | boolean | `true` | open your shell when the program exits |
+| `newTab` | boolean | `true` | open the grid as a tab in the terminal you run claudegrid in |
 | `dir` | string | | base directory for every pane, relative to the config file |
 
 ## Pane options

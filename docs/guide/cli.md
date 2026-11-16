@@ -25,6 +25,7 @@ claudegrid [preset] [options] [-- claude flags]
 | `-t, --name <name>` | name for the window, tmux session and worktree group |
 | `--command <cmd>` | run another program instead of `claude` |
 | `--no-keep-shell` | close the pane when the program exits |
+| `--no-new-tab` | open a new window instead of a tab in the terminal you are in |
 | `-d, --detach` | start the tmux session without attaching |
 | `--dry-run` | print the plan and the commands, open nothing |
 | `--json` | print the plan as JSON |

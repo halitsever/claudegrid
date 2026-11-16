@@ -24,8 +24,15 @@ export function writeConfig(dir, config) {
   writeFileSync(join(dir, ".claudegrid.json"), JSON.stringify(config));
 }
 
+/** Without the terminal's own variables, so a test never opens a tab in the developer's terminal. */
+export function cleanEnv(extra = {}) {
+  const env = { ...process.env, NO_COLOR: "1" };
+  for (const key of Object.keys(env)) if (/^(KONSOLE_|TMUX|WEZTERM_|KITTY_)/.test(key)) delete env[key];
+  return { ...env, ...extra };
+}
+
 export function cli(args, options = {}) {
-  const result = spawnSync(process.execPath, [CLI, ...args], { encoding: "utf8", env: { ...process.env, NO_COLOR: "1", ...options.env }, cwd: options.cwd });
+  const result = spawnSync(process.execPath, [CLI, ...args], { encoding: "utf8", env: cleanEnv(options.env), cwd: options.cwd });
   return { code: result.status, stdout: result.stdout, stderr: result.stderr };
 }
 

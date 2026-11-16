@@ -23,6 +23,8 @@ export interface LaunchContext {
   detach: boolean;
   /** False when nobody can attach to a terminal session, e.g. a launch from the web UI. */
   interactive: boolean;
+  /** Add the grid as a tab to the terminal claudegrid runs in, where the backend supports it. */
+  newTab: boolean;
   dryRun: boolean;
   run: Runner;
 }

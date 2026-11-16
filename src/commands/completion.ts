@@ -2,7 +2,7 @@ import { BACKENDS } from "../config.js";
 import { CliError } from "../ui.js";
 
 export const SUBCOMMANDS = ["ui", "desktop", "init", "doctor", "presets", "worktrees", "completion", "help"];
-export const LAUNCH_FLAGS = ["--layout", "--panes", "--backend", "--worktrees", "--no-worktrees", "--model", "--prompt", "--config", "--cwd", "--name", "--command", "--no-keep-shell", "--dry-run", "--json", "--detach", "--help", "--version"];
+export const LAUNCH_FLAGS = ["--layout", "--panes", "--backend", "--worktrees", "--no-worktrees", "--model", "--prompt", "--config", "--cwd", "--name", "--command", "--no-keep-shell", "--no-new-tab", "--new-tab", "--dry-run", "--json", "--detach", "--help", "--version"];
 const LAYOUTS = ["1x2", "2x1", "2x2", "3x1", "3x2", "3x3", "4x2"];
 
 function bash(): string {
@@ -59,6 +59,7 @@ _claudegrid() {
     '(-t --name)'{-t,--name}'[window and session name]:name:' \\
     '--command[program to run instead of claude]:command:_command_names' \\
     '--no-keep-shell[close the pane when claude exits]' \\
+    '--no-new-tab[open a new window instead of a tab]' \\
     '--dry-run[print the plan without opening anything]' \\
     '--json[print the plan as JSON]' \\
     '(-d --detach)'{-d,--detach}'[do not attach to the new tmux session]' \\
@@ -98,6 +99,7 @@ function fish(): string {
     'complete -c claudegrid -s t -l name -x -d "window and session name"',
     'complete -c claudegrid -l command -x -a "(__fish_complete_command)" -d "program to run instead of claude"',
     'complete -c claudegrid -l no-keep-shell -d "close the pane when claude exits"',
+    'complete -c claudegrid -l no-new-tab -d "open a new window instead of a tab"',
     'complete -c claudegrid -l dry-run -d "print the plan without opening anything"',
     'complete -c claudegrid -l json -d "print the plan as JSON"',
     'complete -c claudegrid -s d -l detach -d "do not attach to the new tmux session"',

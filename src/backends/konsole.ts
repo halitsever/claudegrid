@@ -1,10 +1,11 @@
 import { spawn } from "node:child_process";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { cells, type Grid } from "../layout.js";
 import { run, sleep, which } from "../exec.js";
 import { quoteAll } from "../shell.js";
+import { writeKonsoleTabTicket } from "../spec.js";
 import { CliError } from "../ui.js";
 import type { Backend, LaunchContext } from "./types.js";
 
@@ -65,21 +66,32 @@ export function parseHierarchy(text: string): { views: number[]; splitters: Spli
   return { views, splitters };
 }
 
+export interface ProfileOptions {
+  /** Profile name. Konsole looks profiles up by this name when a tab is added over D-Bus. */
+  name?: string;
+  /** Text for the tab title, instead of Konsole's usual "%d : %n". */
+  tabTitle?: string;
+}
+
 /** Copies the user's default Konsole profile so panes keep their usual font and colors. */
-export function buildProfile(command: string, base?: string): string {
-  const lines = (base ?? "").split("\n").filter((line) => !/^(Name|Command|Parent)=/.test(line.trim()));
+export function buildProfile(command: string, base?: string, options: ProfileOptions = {}): string {
+  const drop = options.tabTitle ? /^(Name|Command|Parent|LocalTabTitleFormat|RemoteTabTitleFormat)=/ : /^(Name|Command|Parent)=/;
+  const lines = (base ?? "").split("\n").filter((line) => !drop.test(line.trim()));
   const general = lines.findIndex((line) => line.trim() === "[General]");
-  const ours = ["Name=claudegrid", `Command=${command}`];
+  const ours = [`Name=${options.name ?? "claudegrid"}`, `Command=${command}`];
+  if (options.tabTitle) ours.push(`LocalTabTitleFormat=${options.tabTitle}`, `RemoteTabTitleFormat=${options.tabTitle}`);
   if (general === -1) return ["[General]", ...ours, "", ...lines].join("\n").trimEnd() + "\n";
   lines.splice(general + 1, 0, ...ours);
   return lines.join("\n").trimEnd() + "\n";
 }
 
+const dataHome = () => process.env.XDG_DATA_HOME || join(homedir(), ".local", "share");
+
 function defaultProfileText(): string | undefined {
   const config = join(process.env.XDG_CONFIG_HOME || join(homedir(), ".config"), "konsolerc");
   const match = existsSync(config) ? /^DefaultProfile=(.+)$/m.exec(readFileSync(config, "utf8")) : null;
   if (!match) return undefined;
-  const file = join(process.env.XDG_DATA_HOME || join(homedir(), ".local", "share"), "konsole", match[1]!.trim());
+  const file = join(dataHome(), "konsole", match[1]!.trim());
   return existsSync(file) ? readFileSync(file, "utf8") : undefined;
 }
 
@@ -92,6 +104,52 @@ async function waitForService(service: string, child: ReturnType<typeof spawn>):
     await sleep(100);
   }
   throw new CliError(`konsole did not show up on D-Bus as ${service} within 10 seconds`, "is a D-Bus session bus running? `claudegrid doctor` checks it");
+}
+
+export const TAB_PROFILE = "claudegrid";
+
+/**
+ * Konsole only loads profiles when it starts, so tabs need a profile that is already in place. It runs a
+ * small script at a fixed path, which keeps working when claudegrid moves or updates.
+ */
+export function ensureTabProfile(paneCommand: string[]): void {
+  const script = join(dataHome(), "claudegrid", "konsole-tab.sh");
+  const scriptText = `#!/bin/sh\nexec ${quoteAll([...paneCommand.slice(0, paneCommand.indexOf("pane") + 1), "--konsole-tab"])}\n`;
+  mkdirSync(dirname(script), { recursive: true });
+  if (!existsSync(script) || readFileSync(script, "utf8") !== scriptText) writeFileSync(script, scriptText, { mode: 0o755 });
+  const profile = join(dataHome(), "konsole", `${TAB_PROFILE}.profile`);
+  if (existsSync(profile) && readFileSync(profile, "utf8").includes(`Command=${script}`)) return;
+  mkdirSync(dirname(profile), { recursive: true });
+  writeFileSync(profile, buildProfile(script, defaultProfileText(), { name: TAB_PROFILE, tabTitle: "▦ claudegrid" }));
+}
+
+/** The Konsole window claudegrid runs in, when it still answers on D-Bus. */
+export function currentKonsoleWindow(env: NodeJS.ProcessEnv = process.env): { service: string; path: string } | undefined {
+  const service = env.KONSOLE_DBUS_SERVICE;
+  const path = env.KONSOLE_DBUS_WINDOW;
+  if (!service || !path || !which("qdbus6")) return undefined;
+  if (!run("qdbus6", [service, path], { timeout: 3000 }).ok) return undefined;
+  return { service: uniqueBusName(service), path };
+}
+
+/** Panes see Konsole's unique bus name (":1.42"), so tickets must be keyed by that, not a well-known name. */
+function uniqueBusName(service: string): string {
+  if (service.startsWith(":")) return service;
+  const owner = run("dbus-send", ["--session", "--print-reply=literal", "--dest=org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus.GetNameOwner", `string:${service}`]);
+  return owner.ok && owner.stdout.trim().startsWith(":") ? owner.stdout.trim() : service;
+}
+
+type WindowCall = (method: string, ...args: string[]) => ReturnType<typeof run>;
+
+const lines = (text: string) => text.split("\n").map((l) => l.trim()).filter(Boolean);
+
+/** Repeated splits halve the last view, so even out the splitters of one tab. Older Konsole lacks resizeSplits. */
+function equalize(service: string, path: string, hierarchyLine: string): void {
+  for (const splitter of parseHierarchy(hierarchyLine).splitters) {
+    if (splitter.children < 2) continue;
+    const share = (100 / splitter.children).toFixed(3);
+    run("dbus-send", ["--session", `--dest=${service}`, path, "org.kde.konsole.Window.resizeSplits", `int32:${splitter.id}`, `array:double:${Array(splitter.children).fill(share).join(",")}`]);
+  }
 }
 
 export const konsole: Backend = {
@@ -109,11 +167,54 @@ export const konsole: Backend = {
   },
   async launch(ctx: LaunchContext) {
     const { plan, specPath } = ctx;
+    const { splits, order } = konsoleSequence(plan.grid);
+    const tab = ctx.newTab ? currentKonsoleWindow() : undefined;
+    let note = "";
+    const title = `▦ ${plan.name}`;
     const wrapper = specPath.replace(/\.json$/, ".sh");
+
+    if (tab) {
+      const window: WindowCall = (method, ...args) => run("qdbus6", [tab.service, tab.path, `org.kde.konsole.Window.${method}`, ...args]);
+      if (ctx.dryRun) {
+        ctx.run("qdbus6", [tab.service, tab.path, "org.kde.konsole.Window.newSession", TAB_PROFILE, plan.panes[0]!.cwd]);
+        splits.forEach((s) => ctx.run("qdbus6", [tab.service, tab.path, "org.kde.konsole.Window.createSplit", `<view ${s.from + 1}>`, String(s.horizontal)]));
+        return "";
+      }
+      const known = lines(window("profileList").stdout).includes(TAB_PROFILE);
+      ensureTabProfile(ctx.paneCommand());
+      if (known) {
+        const session = (id: string, creation: number) => {
+          writeKonsoleTabTicket(tab.service, id, { spec: specPath, index: order[creation]! });
+          for (const context of ["0", "1"]) run("qdbus6", [tab.service, `/Sessions/${id}`, "org.kde.konsole.Session.setTabTitleFormat", context, title]);
+        };
+        const sessionsNow = () => new Set(lines(window("sessionList").stdout));
+        const viewsBefore = new Set(parseHierarchy(window("viewHierarchy").stdout).views);
+        const first = window("newSession", TAB_PROFILE, plan.panes[0]!.cwd);
+        if (!first.ok) throw new CliError(`konsole could not open a tab: ${first.stderr || first.stdout}`, "use --no-new-tab to open a new window instead");
+        session(first.stdout.trim(), 0);
+        const firstView = parseHierarchy(window("viewHierarchy").stdout).views.find((v) => !viewsBefore.has(v));
+        if (firstView === undefined) throw new CliError("konsole opened a tab but claudegrid could not find it");
+
+        const viewIds = [firstView];
+        for (const [k, split] of splits.entries()) {
+          const views = new Set(parseHierarchy(window("viewHierarchy").stdout).views);
+          const before = sessionsNow();
+          const result = window("createSplit", String(viewIds[split.from]), String(split.horizontal));
+          if (!result.ok || result.stdout !== "true") throw new CliError(`konsole could not split the tab: ${result.stderr || result.stdout}`);
+          viewIds.push(parseHierarchy(window("viewHierarchy").stdout).views.find((v) => !views.has(v)) ?? Math.max(...viewIds) + 1);
+          const created = [...sessionsNow()].find((s) => !before.has(s));
+          if (created) session(created, k + 1);
+        }
+        const ourLine = lines(window("viewHierarchy").stdout).find((line) => parseHierarchy(line).views.includes(firstView));
+        if (ourLine) equalize(tab.service, tab.path, ourLine);
+        window("setCurrentView", String(firstView));
+        return "opened a new Konsole tab";
+      }
+      note = "New tabs work after you restart Konsole, it only reads the claudegrid profile at startup.";
+    }
+
     const profile = specPath.replace(/\.json$/, ".profile");
     const konsoleArgs = ["--separate", "--nofork", "--profile", profile, "--workdir", plan.panes[0]!.cwd];
-    const { splits } = konsoleSequence(plan.grid);
-
     if (ctx.dryRun) {
       ctx.run("konsole", konsoleArgs);
       splits.forEach((s) => ctx.run("qdbus6", ["org.kde.konsole-<pid>", "/Windows/1", "org.kde.konsole.Window.createSplit", String(s.from), String(s.horizontal)]));
@@ -121,30 +222,23 @@ export const konsole: Backend = {
     }
 
     writeFileSync(wrapper, `#!/bin/sh\nexec ${quoteAll(ctx.paneCommand())}\n`, { mode: 0o700 });
-    writeFileSync(profile, buildProfile(wrapper, defaultProfileText()), { mode: 0o600 });
+    writeFileSync(profile, buildProfile(wrapper, defaultProfileText(), { tabTitle: title }), { mode: 0o600 });
 
     const child = spawn("konsole", konsoleArgs, { detached: true, stdio: "ignore" });
     child.unref();
     const service = `org.kde.konsole-${child.pid}`;
     await waitForService(service, child);
 
-    const window = (method: string, ...args: string[]) => run("qdbus6", [service, "/Windows/1", `org.kde.konsole.Window.${method}`, ...args]);
+    const window: WindowCall = (method, ...args) => run("qdbus6", [service, "/Windows/1", `org.kde.konsole.Window.${method}`, ...args]);
     const viewIds = [0];
     for (const split of splits) {
       const before = new Set(parseHierarchy(window("viewHierarchy").stdout).views);
       const result = window("createSplit", String(viewIds[split.from]), String(split.horizontal));
       if (!result.ok || result.stdout !== "true") throw new CliError(`konsole could not split the window: ${result.stderr || result.stdout}`);
-      const created = parseHierarchy(window("viewHierarchy").stdout).views.find((v) => !before.has(v));
-      viewIds.push(created ?? Math.max(...viewIds) + 1);
+      viewIds.push(parseHierarchy(window("viewHierarchy").stdout).views.find((v) => !before.has(v)) ?? Math.max(...viewIds) + 1);
     }
-
-    // Repeated splits halve the last view, so even the splitters out. Older Konsole lacks resizeSplits.
-    for (const splitter of parseHierarchy(window("viewHierarchy").stdout).splitters) {
-      if (splitter.children < 2) continue;
-      const share = (100 / splitter.children).toFixed(3);
-      run("dbus-send", ["--session", `--dest=${service}`, "/Windows/1", "org.kde.konsole.Window.resizeSplits", `int32:${splitter.id}`, `array:double:${Array(splitter.children).fill(share).join(",")}`]);
-    }
+    equalize(service, "/Windows/1", window("viewHierarchy").stdout);
     window("setCurrentView", "0");
-    return `opened a Konsole window (pid ${child.pid})`;
+    return `opened a Konsole window (pid ${child.pid})${note ? `. ${note}` : ""}`;
   },
 };

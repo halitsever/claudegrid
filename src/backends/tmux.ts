@@ -32,7 +32,9 @@ export const tmux: Backend = {
   },
   async launch(ctx: LaunchContext) {
     const { plan } = ctx;
+    // Inside tmux a new tab is a tmux window. Without it, a separate session that we switch to.
     const inside = Boolean(process.env.TMUX);
+    const asWindow = inside && ctx.newTab;
     const session = ctx.dryRun ? tmuxSessionName(plan.name) : uniqueSession(tmuxSessionName(plan.name));
     const tmuxRun = (...args: string[]) => ctx.run("tmux", args);
     const cmd = (index: number) => ["--", ...ctx.paneCommand(index)];
@@ -41,7 +43,7 @@ export const tmux: Backend = {
 
     const first = plan.panes[0]!;
     const size = ["-x", String(process.stdout.columns || 200), "-y", String(process.stdout.rows || 50)];
-    const created = inside
+    const created = asWindow
       ? tmuxRun("new-window", "-P", "-F", "#{pane_id}", "-n", plan.name, "-c", first.cwd, ...cmd(0))
       : tmuxRun("new-session", "-d", "-P", "-F", "#{pane_id}", "-s", session, "-n", plan.name, ...size, "-c", first.cwd, ...cmd(0));
     paneId.set(0, created);
@@ -70,7 +72,11 @@ export const tmux: Backend = {
     tmuxRun("select-pane", "-t", created);
 
     if (ctx.dryRun) return "";
-    if (inside) return "opened a new tmux window";
+    if (asWindow) return "opened a new tmux window";
+    if (inside) {
+      if (run("tmux", ["switch-client", "-t", `=${session}`]).ok) return `switched to the new tmux session ${session}`;
+      return `started tmux session ${session}, switch to it with: tmux switch-client -t ${session}`;
+    }
     if (ctx.detach || !ctx.interactive) return `started tmux session ${session}, attach with: tmux attach -t ${session}`;
     spawnSync("tmux", ["attach-session", "-t", `=${session}`], { stdio: "inherit" });
     return "";

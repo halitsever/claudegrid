@@ -23,7 +23,9 @@ export const wezterm: Backend = {
     };
     const byCell = new Map(plan.panes.map((p) => [`${p.col},${p.row}`, p]));
     const first = plan.panes[0]!;
-    const created = cli("spawn", "--new-window", "--cwd", first.cwd, "--", ...ctx.paneCommand(0));
+    // Without --new-window, wezterm cli spawn adds a tab to the window of WEZTERM_PANE.
+    const asTab = ctx.newTab && Boolean(process.env.WEZTERM_PANE);
+    const created = cli("spawn", ...(asTab ? [] : ["--new-window"]), "--cwd", first.cwd, "--", ...ctx.paneCommand(0));
 
     const columns = plan.grid.columns;
     const tops = [created];
@@ -40,6 +42,6 @@ export const wezterm: Backend = {
     });
     cli("set-tab-title", "--pane-id", created, plan.name);
     cli("activate-pane", "--pane-id", created);
-    return ctx.dryRun ? "" : "opened a WezTerm window";
+    return ctx.dryRun ? "" : asTab ? "opened a new WezTerm tab" : "opened a WezTerm window";
   },
 };

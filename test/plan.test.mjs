@@ -12,6 +12,8 @@ test("defaults to four claude panes in the current directory", () => {
   assert.deepEqual(plan.panes.map((p) => p.argv), Array(4).fill(["claude"]));
   assert.ok(plan.panes.every((p) => p.cwd === cwd));
   assert.equal(plan.keepShell, true);
+  assert.equal(plan.newTab, true);
+  assert.equal(buildPlan({ cwd, grid: { newTab: false } }).newTab, false);
 });
 
 test("claude arguments are assembled in a fixed order", () => {

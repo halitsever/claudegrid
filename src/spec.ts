@@ -1,4 +1,4 @@
-import { chmodSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { chmodSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomBytes } from "node:crypto";
@@ -60,6 +60,20 @@ export function writeSpec(spec: LaunchSpec): string {
   const path = join(dir, `${Date.now().toString(36)}-${randomBytes(4).toString("hex")}.json`);
   writeFileSync(path, JSON.stringify(spec, null, 2), { mode: 0o600 });
   return path;
+}
+
+/**
+ * Panes in a Konsole tab all run the same profile command, so each one finds its grid through a small
+ * file named after its D-Bus service and session number, written as soon as the session exists.
+ */
+export function konsoleTabTicketPath(service: string, session: string): string {
+  return join(runtimeDir(), `konsole-tab-${service.replace(/[^\w.-]/g, "_")}-${session}.json`);
+}
+
+export function writeKonsoleTabTicket(service: string, session: string, ticket: { spec: string; index: number }): void {
+  const path = konsoleTabTicketPath(service, session);
+  writeFileSync(`${path}.tmp`, JSON.stringify(ticket), { mode: 0o600 });
+  renameSync(`${path}.tmp`, path);
 }
 
 export function readSpec(path: string): LaunchSpec {
