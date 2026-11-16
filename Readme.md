@@ -5,7 +5,7 @@
 
 <p align="center">
 A grid of Claude Code agents, one command.<br>
-Konsole, tmux, kitty and WezTerm. A prompt, model and git branch per pane.<br>
+Konsole, iTerm2, Terminal.app, tmux, kitty and WezTerm. A prompt, model and git branch per pane.<br>
 <br/>
 <a href="https://github.com/halitsever/claudegrid/actions/workflows/ci.yml"><img src="https://github.com/halitsever/claudegrid/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
 <a href="https://www.npmjs.com/package/@halitsever/claudegrid"><img src="https://img.shields.io/npm/v/@halitsever/claudegrid?color=e8573c" alt="npm"/></a>
@@ -28,7 +28,7 @@ Konsole, tmux, kitty and WezTerm. A prompt, model and git branch per pane.<br>
 - **A task per pane** - `claudegrid -p "fix lint" -p "write tests"` starts each pane on its own prompt
 - **Git worktrees** - `--worktrees` puts every agent on its own branch and checkout, so they never edit the same files
 - **Presets** - save teams of agents in `.claudegrid.json` and start them with `claudegrid review`
-- **Linux and macOS** - KDE Konsole, iTerm2, tmux (works anywhere, also over SSH), kitty and WezTerm. Opens as a new tab in the terminal you are in
+- **Linux and macOS** - see [supported terminals](#supported-terminals). Opens as a new tab in the terminal you are in
 - **Desktop app** - `claudegrid ui` opens a window to set up panes, preview and launch, no terminal needed
 - **Safe to try** - `--dry-run` prints every command, `doctor` checks your setup, config typos get a "did you mean"
 - **No runtime dependencies** - plain Node.js, shell completion for bash, zsh and fish
@@ -66,7 +66,23 @@ claudegrid -w -n 3                           # 3 agents on separate git worktree
 claudegrid -b tmux -d                        # tmux session in the background
 claudegrid -- --continue                     # pass flags to every claude
 claudegrid --dry-run                         # show what would run
+claudegrid --trust                           # skip Claude Code's "trust this folder" question
 ```
+
+### Supported terminals
+
+| Terminal | Platform | How the grid opens |
+| --- | --- | --- |
+| KDE Konsole | Linux | split panes in a new tab or window |
+| iTerm2 | macOS | split panes in a new tab or window |
+| Terminal.app | macOS | one window per pane, tiled over the screen |
+| tmux 3.1+ | Linux, macOS, SSH | split panes in a new tmux window or session |
+| kitty | Linux, macOS | a new kitty window with the grid layout |
+| WezTerm | Linux, macOS | split panes in a new tab or window |
+
+`auto` uses the terminal you run claudegrid in when it can split, and otherwise the first one installed in the order above, with Terminal.app last. Pick one with `-b`, for example `claudegrid -b terminal`. `claudegrid doctor` shows what works on your machine.
+
+On macOS, the first launch asks whether your terminal may control iTerm2 or Terminal. Allow it, or later in **System Settings > Privacy & Security > Automation**.
 
 ### Desktop app
 
