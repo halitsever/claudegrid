@@ -4,9 +4,11 @@
 <img src="https://halitsever-api.vercel.app/api/repo-title?title=claudegrid">
 
 <p align="center">
-Open a Konsole window split 2x2 with Claude Code running in every pane.<br>
+A grid of Claude Code agents, one command.<br>
+Konsole, tmux, kitty and WezTerm. A prompt, model and git branch per pane.<br>
 <br/>
-<br/>
+<a href="https://github.com/halitsever/claudegrid/actions/workflows/ci.yml"><img src="https://github.com/halitsever/claudegrid/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
+<a href="https://www.npmjs.com/package/claudegrid"><img src="https://img.shields.io/npm/v/claudegrid?color=e8573c" alt="npm"/></a>
 <img src="https://img.shields.io/github/sponsors/halitsever"/>
 </p>
 <p align="center">
@@ -15,35 +17,75 @@ Open a Konsole window split 2x2 with Claude Code running in every pane.<br>
 </p>
 
 <p align="center">
+<img src="docs/public/demo.svg" alt="claudegrid typing a command and four Claude Code panes opening, each on its own task" width="860"/>
+</p>
+
+<p align="center">
 <img src="https://halitsever-api.vercel.app/api/details"/>
 </p>
 
-- 🪟 **One command, four sessions** - `claudegrid` opens a new Konsole window with four `claude` panes
-- 📁 **Same directory** - every pane starts in the directory you ran it from
-- 🎛️ **Shared flags** - extra arguments go to each `claude`, e.g. `claudegrid --model opus`
-- 🐚 **Shell stays open** - when `claude` exits, the pane drops into your shell
+- 🪟 **Any grid** - `2x2` by default, or `3x2`, `1x3`, or a pane count. Panes come out evenly sized
+- 🎯 **A task per pane** - `claudegrid -p "fix lint" -p "write tests"` starts each pane on its own prompt
+- 🌿 **Git worktrees** - `--worktrees` puts every agent on its own branch and checkout, so they never edit the same files
+- 🧩 **Presets** - save teams of agents in `.claudegrid.json` and start them with `claudegrid review`
+- 🖥️ **Four terminals** - KDE Konsole, tmux (works anywhere, also over SSH), kitty and WezTerm
+- 🩺 **Safe to try** - `--dry-run` prints every command, `doctor` checks your setup, config typos get a "did you mean"
+- ⚡ **No runtime dependencies** - plain Node.js, shell completion for bash, zsh and fish
 
 <p align="center" >
 <img src="https://halitsever-api.vercel.app/api/installation"/>
 </p>
 
-Requires KDE Konsole, `qdbus6` and [Claude Code](https://claude.com/claude-code).
-
 ```sh
-git clone https://github.com/halitsever/claudegrid.git
-cd claudegrid
-./install.sh
+npm install -g claudegrid
 ```
 
-The installer copies `claudegrid` to `~/.local/bin` (override with `BIN_DIR`) and creates a `claudegrid` Konsole profile.
-
-<h3 id="usage">Usage</h3>
+or without npm on your PATH:
 
 ```sh
-cd ~/my-project
-claudegrid                    # four plain claude sessions
-claudegrid --continue         # every pane gets the same flags
+curl -fsSL https://raw.githubusercontent.com/halitsever/claudegrid/main/install.sh | bash
 ```
+
+You need Node.js 20+, [Claude Code](https://claude.com/claude-code) and one of the supported terminals. Run `claudegrid doctor` to check.
+
+### Usage
+
+```sh
+claudegrid                                   # 4 panes in the current directory
+claudegrid -l 3x2 -m opus                    # 6 panes on Opus
+claudegrid -p "add a /health endpoint" -p "fix the tests" -p "review the diff"
+claudegrid -w -n 3                           # 3 agents on separate git worktrees
+claudegrid -b tmux -d                        # tmux session in the background
+claudegrid -- --continue                     # pass flags to every claude
+claudegrid --dry-run                         # show what would run
+```
+
+### Config and presets
+
+`claudegrid init` writes a `.claudegrid.json` you can edit:
+
+```json
+{
+  "$schema": "https://halitsever.github.io/claudegrid/schema.json",
+  "model": "sonnet",
+  "panes": [
+    { "name": "api", "dir": "server", "prompt": "Add rate limiting to the public endpoints" },
+    { "name": "web", "dir": "web" },
+    { "name": "tests", "prompt": "Run the test suite and fix whatever fails" },
+    { "name": "review", "model": "opus", "prompt": "Review the uncommitted changes" }
+  ],
+  "presets": {
+    "swarm": { "description": "Six agents on their own branches", "panes": 6, "worktrees": true }
+  }
+}
+```
+
+```sh
+claudegrid          # the four panes above
+claudegrid swarm    # the preset
+```
+
+Read more: [configuration](https://halitsever.github.io/claudegrid/guide/configuration), [presets](https://halitsever.github.io/claudegrid/guide/presets), [worktrees](https://halitsever.github.io/claudegrid/guide/worktrees), [terminals](https://halitsever.github.io/claudegrid/guide/terminals), [CLI reference](https://halitsever.github.io/claudegrid/guide/cli).
 
 <p align="center">
 <a href="https://github.com/halitsever/claudegrid/issues"><img src="https://halitsever-api.vercel.app/api/issue"/></a>

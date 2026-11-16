@@ -3,7 +3,7 @@ import { defineConfig } from "vitepress";
 const hostname = "https://halitsever.github.io";
 const base = "/claudegrid/";
 const siteUrl = hostname + base;
-const description = "Run 4 Claude Code AI agents side by side. One command opens a KDE Konsole window split 2x2 with claude in every pane.";
+const description = "Run several Claude Code agents side by side in Konsole, tmux, kitty or WezTerm, with a prompt, model and git worktree per pane.";
 
 export default defineConfig({
   lang: "en-US",
@@ -15,7 +15,7 @@ export default defineConfig({
   lastUpdated: true,
   sitemap: { hostname: siteUrl },
   head: [
-    ["meta", { name: "keywords", content: "claude code, claude, anthropic, ai coding agent, multi agent, konsole, kde, split terminal, tiling terminal, linux cli" }],
+    ["meta", { name: "keywords", content: "claude code, claude, anthropic, ai coding agent, multi agent, parallel agents, git worktree, tmux, konsole, kitty, wezterm, split terminal, cli" }],
     ["meta", { name: "author", content: "Halit Sever" }],
     ["link", { rel: "icon", type: "image/svg+xml", href: base + "logo.svg" }],
     ["link", { rel: "apple-touch-icon", href: base + "logo-180.png" }],
@@ -46,16 +46,33 @@ export default defineConfig({
     logo: "/logo.svg",
     nav: [
       { text: "Guide", link: "/guide/getting-started" },
+      { text: "Config", link: "/guide/configuration" },
+      { text: "CLI", link: "/guide/cli" },
       { text: "GitHub", link: "https://github.com/halitsever/claudegrid" },
     ],
     sidebar: [
       {
-        text: "Guide",
+        text: "Introduction",
         items: [
           { text: "Getting started", link: "/guide/getting-started" },
           { text: "Usage", link: "/guide/usage" },
-          { text: "How it works", link: "/guide/how-it-works" },
+        ],
+      },
+      {
+        text: "Guide",
+        items: [
+          { text: "Configuration", link: "/guide/configuration" },
+          { text: "Presets", link: "/guide/presets" },
+          { text: "Git worktrees", link: "/guide/worktrees" },
+          { text: "Terminals", link: "/guide/terminals" },
+        ],
+      },
+      {
+        text: "Reference",
+        items: [
+          { text: "CLI", link: "/guide/cli" },
           { text: "Troubleshooting", link: "/guide/troubleshooting" },
+          { text: "Changelog", link: "https://github.com/halitsever/claudegrid/blob/main/CHANGELOG.md" },
         ],
       },
     ],
