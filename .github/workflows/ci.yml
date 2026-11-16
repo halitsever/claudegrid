@@ -32,6 +32,22 @@ jobs:
           GIT_COMMITTER_NAME: ci
           GIT_COMMITTER_EMAIL: ci@example.com
 
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: brew install tmux
+      - run: npm ci
+      - run: npm test
+      - name: install.sh with the bash that ships with macOS
+        run: /bin/bash ./install.sh && claudegrid --version && claudegrid doctor || true
+      - name: iTerm2 dry run
+        run: node dist/cli.js -b iterm2 -l 3x2 -p "hello" --dry-run
+
   lint:
     runs-on: ubuntu-latest
     steps:

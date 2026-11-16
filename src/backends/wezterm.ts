@@ -1,5 +1,7 @@
 import { splitPercent } from "../layout.js";
-import { run, which } from "../exec.js";
+import { findProgram, run } from "../exec.js";
+
+const weztermBinary = () => findProgram("wezterm", "WezTerm.app");
 import { CliError } from "../ui.js";
 import type { Backend, LaunchContext } from "./types.js";
 
@@ -8,15 +10,16 @@ export const wezterm: Backend = {
   label: "WezTerm",
   isCurrent: (env) => Boolean(env.WEZTERM_PANE),
   check() {
-    if (!which("wezterm")) return { ok: false, detail: "wezterm is not installed" };
-    if (!run("wezterm", ["cli", "list"], { timeout: 5000 }).ok) return { ok: false, detail: "WezTerm is installed but not running" };
+    const binary = weztermBinary();
+    if (!binary) return { ok: false, detail: "wezterm is not installed" };
+    if (!run(binary, ["cli", "list"], { timeout: 5000 }).ok) return { ok: false, detail: "WezTerm is installed but not running" };
     return { ok: true, detail: "wezterm cli" };
   },
   async launch(ctx: LaunchContext) {
     const { plan } = ctx;
     const cli = (...args: string[]) => {
       try {
-        return ctx.run("wezterm", ["cli", ...args]);
+        return ctx.run(weztermBinary() ?? "wezterm", ["cli", ...args]);
       } catch (error) {
         throw new CliError((error as Error).message, "claudegrid adds a window to a running WezTerm, so open WezTerm first");
       }

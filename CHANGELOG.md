@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- macOS support: an iTerm2 backend that opens the grid as a tab or window over AppleScript, kitty and WezTerm found inside their app bundles, `claudegrid ui` as a Chrome, Brave, Edge or Arc app window, and `claudegrid desktop install` creating `~/Applications/claudegrid.app`
+- `--dry-run` and `--json` can preview a terminal that is not installed
+- CI runs the tests on macOS too
+
+### Fixed
+
+- `install.sh` works with the bash 3.2 that ships with macOS
+
 ## [1.2.0] - 2026-11-16
 
 ### Added

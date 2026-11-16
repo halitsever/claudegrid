@@ -75,6 +75,15 @@ test("doctor runs and reports node", () => {
   assert.match(result.stdout, /node\s+v\d+/);
 });
 
+test("the macOS app bundle launches claudegrid ui with the login shell's PATH", async () => {
+  const { macInfoPlist, macLauncher } = await import("../dist/commands/desktop.js");
+  assert.match(macInfoPlist("1.2.3"), /<key>CFBundleExecutable<\/key><string>claudegrid<\/string>/);
+  assert.match(macInfoPlist("1.2.3"), /<string>1.2.3<\/string>/);
+  const launcher = macLauncher(["/opt/node", "/Users/a b/cli.js"]);
+  assert.match(launcher, /^#!\/bin\/sh\nPATH="\$\("\$\{SHELL:-\/bin\/zsh\}" -lc/);
+  assert.match(launcher, /exec \/opt\/node '\/Users\/a b\/cli.js' ui\n$/);
+});
+
 test("desktop entry quotes paths for the Exec key", async () => {
   const { desktopEntry } = await import("../dist/commands/desktop.js");
   const entry = desktopEntry(["/usr/bin/node", "/home/a b/cli.js"]);

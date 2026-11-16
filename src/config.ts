@@ -3,7 +3,7 @@ import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { CliError, didYouMean } from "./ui.js";
 
-export const BACKENDS = ["auto", "konsole", "tmux", "kitty", "wezterm"] as const;
+export const BACKENDS = ["auto", "konsole", "iterm2", "tmux", "kitty", "wezterm"] as const;
 export type BackendName = (typeof BACKENDS)[number];
 
 export const PROJECT_CONFIG_NAMES = [".claudegrid.json", "claudegrid.json"];

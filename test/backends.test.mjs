@@ -4,6 +4,7 @@ import { buildProfile, konsoleSequence, parseHierarchy } from "../dist/backends/
 import { kittySession } from "../dist/backends/kitty.js";
 import { parseTmuxVersion, tmuxSessionName } from "../dist/backends/tmux.js";
 import { pickBackend } from "../dist/backends/index.js";
+import { itermScript } from "../dist/backends/iterm2.js";
 import { konsolePaneIndex } from "../dist/pane.js";
 import { buildPlan } from "../dist/plan.js";
 import { sandbox } from "./helpers.mjs";
@@ -79,6 +80,23 @@ test("tmux names and versions", () => {
   assert.deepEqual(parseTmuxVersion("tmux 3.6a"), [3, 6]);
   assert.deepEqual(parseTmuxVersion("tmux next-3.7"), [3, 7]);
   assert.equal(parseTmuxVersion("tmux master"), undefined);
+});
+
+test("iTerm2 gets one AppleScript that splits columns first, then rows", () => {
+  const plan = buildPlan({ cwd: sandbox(), grid: { layout: "2x2", panes: [{ name: 'say "hi"' }, {}, {}, {}] }, name: "demo" });
+  const commands = plan.panes.map((p) => `/tmp/pane-${p.index}.sh`);
+  const script = itermScript(plan, commands, { newTab: false });
+  assert.match(script, /^tell application "iTerm"/);
+  assert.match(script, /set grid to \(create window with default profile command "\/tmp\/pane-0.sh"\)/);
+  assert.match(script, /tell s0 to set name to "say \\"hi\\""/);
+  assert.match(script, /tell s0 to set s1 to \(split vertically with default profile command "\/tmp\/pane-1.sh"\)/);
+  assert.match(script, /tell s0 to set s2 to \(split horizontally with default profile command "\/tmp\/pane-2.sh"\)/);
+  assert.match(script, /tell s1 to set s3 to \(split horizontally with default profile command "\/tmp\/pane-3.sh"\)/);
+  assert.match(itermScript(plan, commands, { newTab: true }), /tell current window to set grid to \(create tab/);
+});
+
+test("a dry run can preview a terminal that is not installed", () => {
+  assert.equal(pickBackend("iterm2", process.env, true).name, "iterm2");
 });
 
 test("asking for an unusable backend says why", () => {

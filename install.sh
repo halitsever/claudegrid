@@ -48,7 +48,8 @@ if [ ! -w "$(npm prefix -g)" ]; then
 fi
 
 say "installing $source"
-npm install -g --silent --no-audit --no-fund "${prefix_args[@]}" "$source"
+# macOS ships bash 3.2, where "${arr[@]}" of an empty array trips set -u.
+npm install -g --silent --no-audit --no-fund ${prefix_args[@]+"${prefix_args[@]}"} "$source"
 
 if ! command -v claudegrid >/dev/null; then
   say "installed, but claudegrid is not on your PATH yet. Add this to your shell config:"

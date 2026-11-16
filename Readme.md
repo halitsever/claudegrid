@@ -28,7 +28,7 @@ Konsole, tmux, kitty and WezTerm. A prompt, model and git branch per pane.<br>
 - 🎯 **A task per pane** - `claudegrid -p "fix lint" -p "write tests"` starts each pane on its own prompt
 - 🌿 **Git worktrees** - `--worktrees` puts every agent on its own branch and checkout, so they never edit the same files
 - 🧩 **Presets** - save teams of agents in `.claudegrid.json` and start them with `claudegrid review`
-- 🖥️ **Four terminals** - KDE Konsole, tmux (works anywhere, also over SSH), kitty and WezTerm
+- 🖥️ **Linux and macOS** - KDE Konsole, iTerm2, tmux (works anywhere, also over SSH), kitty and WezTerm. Opens as a new tab in the terminal you are in
 - 🖱️ **Desktop app** - `claudegrid ui` opens a window to set up panes, preview and launch, no terminal needed
 - 🩺 **Safe to try** - `--dry-run` prints every command, `doctor` checks your setup, config typos get a "did you mean"
 - ⚡ **No runtime dependencies** - plain Node.js, shell completion for bash, zsh and fish

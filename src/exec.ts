@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { accessSync, constants, statSync } from "node:fs";
+import { homedir } from "node:os";
 import { delimiter, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { CliError } from "./ui.js";
@@ -17,6 +18,17 @@ export function which(command: string): string | undefined {
   if (command.includes("/")) return isExecutable(command) ? command : undefined;
   for (const dir of (process.env.PATH ?? "").split(delimiter)) {
     if (dir && isExecutable(join(dir, command))) return join(dir, command);
+  }
+  return undefined;
+}
+
+/** macOS apps keep their command line tool inside the bundle, which is often not on PATH. */
+export function findProgram(command: string, macApp?: string): string | undefined {
+  const found = which(command);
+  if (found || process.platform !== "darwin" || !macApp) return found;
+  for (const dir of ["/Applications", join(homedir(), "Applications")]) {
+    const inside = join(dir, macApp, "Contents", "MacOS", command);
+    if (isExecutable(inside)) return inside;
   }
   return undefined;
 }

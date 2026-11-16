@@ -13,8 +13,10 @@ claudegrid opens several [Claude Code](https://claude.com/claude-code) sessions 
 
 - **Node.js 20** or newer
 - **Claude Code**, with `claude` on your `PATH`
+- Linux or macOS
 - One of these terminals:
-  - **KDE Konsole** with `qdbus6`
+  - **KDE Konsole** with `qdbus6` (Linux)
+  - **iTerm2** (macOS)
   - **tmux** 3.1 or newer, which works inside any terminal and over SSH
   - **kitty**
   - **WezTerm**
@@ -47,6 +49,17 @@ cd claudegrid
 The `.deb` package needs Node.js 20 or newer from your distro (Ubuntu 25.04 and later, Debian 13) or from [NodeSource](https://github.com/nodesource/distributions). It adds shell completion for bash, zsh and fish and puts claudegrid in your app menu.
 
 The install script uses npm under the hood. When your global npm folder needs root, it installs into `~/.local` instead. It also removes the first, bash-only version of claudegrid if it finds one.
+
+### macOS
+
+Install Node.js and Claude Code, for example with [Homebrew](https://brew.sh), then claudegrid with npm or the install script:
+
+```sh
+brew install node tmux
+npm install -g @anthropic-ai/claude-code claudegrid
+```
+
+On a Mac, claudegrid uses iTerm2 when you run it there, and kitty, WezTerm or tmux otherwise. Terminal.app cannot split panes, so from Terminal.app claudegrid opens iTerm2, kitty or WezTerm when one is installed, and a tmux session in Terminal.app otherwise. The first time claudegrid drives iTerm2, macOS asks whether your terminal may control iTerm2. Allow it, or later in **System Settings → Privacy & Security → Automation**.
 
 ## Check your setup
 
