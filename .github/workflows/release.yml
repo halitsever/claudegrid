@@ -42,8 +42,50 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release create "$GITHUB_REF_NAME" claudegrid.tgz claudegrid.deb --title "$GITHUB_REF_NAME" --notes-file notes.md
-      - name: npm publish
+      - name: npm publish with a token
         if: env.NPM_TOKEN != ''
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish claudegrid.tgz --provenance --access public
+      # Trusted publishing needs no secret: npm checks this workflow's identity. Turn it on with the
+      # repo variable NPM_TRUSTED_PUBLISHING=true after adding the workflow as a trusted publisher on npmjs.com.
+      - name: npm publish with trusted publishing
+        if: env.NPM_TOKEN == '' && vars.NPM_TRUSTED_PUBLISHING == 'true'
+        run: |
+          npm install -g npm@11
+          npm publish claudegrid.tgz --access public
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tarball
+          path: claudegrid.tgz
+
+  aur:
+    needs: release
+    runs-on: ubuntu-latest
+    env:
+      AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        if: env.AUR_SSH_PRIVATE_KEY != ''
+      - uses: actions/download-artifact@v4
+        if: env.AUR_SSH_PRIVATE_KEY != ''
+        with:
+          name: tarball
+      - name: push to the AUR
+        if: env.AUR_SSH_PRIVATE_KEY != ''
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$AUR_SSH_PRIVATE_KEY" > ~/.ssh/aur
+          chmod 600 ~/.ssh/aur
+          ssh-keyscan -t ed25519 aur.archlinux.org >> ~/.ssh/known_hosts
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/aur -o IdentitiesOnly=yes"
+          git clone ssh://aur@aur.archlinux.org/claudegrid.git aur
+          version="${GITHUB_REF_NAME#v}"
+          bash packaging/aur/update.sh "$version" "$(sha256sum claudegrid.tgz | cut -d' ' -f1)" aur
+          cd aur
+          git config user.name "claudegrid release"
+          git config user.email "noreply@github.com"
+          git add PKGBUILD .SRCINFO
+          git diff --cached --quiet && exit 0
+          git commit -m "claudegrid $version"
+          git push origin HEAD:master
