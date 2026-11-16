@@ -41,6 +41,7 @@
       "enum": [
         "auto",
         "konsole",
+        "iterm2",
         "tmux",
         "kitty",
         "wezterm"
@@ -181,6 +182,7 @@
           "enum": [
             "auto",
             "konsole",
+            "iterm2",
             "tmux",
             "kitty",
             "wezterm"

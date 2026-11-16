@@ -55,7 +55,7 @@ ${b("options")}
   -m, --model <model>     model for every pane, e.g. opus or sonnet
   -w, --worktrees         give every pane its own git worktree and branch
       --no-worktrees      turn worktrees off when the config turns them on
-  -b, --backend <name>    auto, konsole, tmux, kitty or wezterm ${d("(default auto)")}
+  -b, --backend <name>    auto, konsole, iterm2, tmux, kitty or wezterm ${d("(default auto)")}
   -C, --cwd <dir>         run from this directory
   -c, --config <file>     use this config file instead of .claudegrid.json
   -t, --name <name>       name for the window, tmux session and worktree group
@@ -176,7 +176,7 @@ async function main(argv: string[]): Promise<number> {
     }
     case "desktop": {
       const action = rest[0] ?? "install";
-      if (action === "install") installDesktop();
+      if (action === "install") installDesktop(version);
       else if (action === "uninstall") uninstallDesktop();
       else throw new CliError(`unknown desktop action "${action}"`, "use `claudegrid desktop install` or `claudegrid desktop uninstall`");
       return 0;

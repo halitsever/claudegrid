@@ -120,7 +120,7 @@ export function printPlan(plan: LaunchPlan, backend: string): void {
 
 export async function launch(o: LaunchOptions): Promise<void> {
   const plan = planFromOptions(o);
-  const backend = pickBackend(plan.backend);
+  const backend = pickBackend(plan.backend, process.env, o.dryRun || o.json);
 
   if (o.json) {
     process.stdout.write(JSON.stringify(planJson(plan, backend), null, 2) + "\n");

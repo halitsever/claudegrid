@@ -1,6 +1,8 @@
 import { spawn } from "node:child_process";
 import { writeFileSync } from "node:fs";
-import { which } from "../exec.js";
+import { findProgram } from "../exec.js";
+
+const kittyBinary = () => findProgram("kitty", "kitty.app");
 import { quote, quoteAll } from "../shell.js";
 import type { LaunchPlan } from "../plan.js";
 import type { Backend, LaunchContext } from "./types.js";
@@ -16,7 +18,7 @@ export const kitty: Backend = {
   name: "kitty",
   label: "kitty",
   isCurrent: (env) => Boolean(env.KITTY_WINDOW_ID),
-  check: () => (which("kitty") ? { ok: true, detail: "kitty" } : { ok: false, detail: "kitty is not installed" }),
+  check: () => (kittyBinary() ? { ok: true, detail: kittyBinary()! } : { ok: false, detail: "kitty is not installed" }),
   async launch(ctx: LaunchContext) {
     const session = ctx.specPath.replace(/\.json$/, ".kitty");
     const content = kittySession(ctx.plan, (i) => ctx.paneCommand(i));
@@ -26,7 +28,7 @@ export const kitty: Backend = {
       return "";
     }
     writeFileSync(session, content, { mode: 0o600 });
-    const child = spawn("kitty", ["--title", ctx.plan.name, "--session", session], { detached: true, stdio: "ignore" });
+    const child = spawn(kittyBinary() ?? "kitty", ["--title", ctx.plan.name, "--session", session], { detached: true, stdio: "ignore" });
     child.unref();
     return `opened a kitty window (pid ${child.pid})`;
   },

@@ -1,7 +1,7 @@
 {
   "name": "claudegrid",
   "version": "1.2.0",
-  "description": "Run several Claude Code agents side by side in one terminal window: Konsole, tmux, kitty and WezTerm grids with per-pane prompts, presets and git worktrees.",
+  "description": "Run several Claude Code agents side by side in one terminal window: Konsole, iTerm2, tmux, kitty and WezTerm grids on Linux and macOS, with per-pane prompts, presets, git worktrees and a desktop app.",
   "keywords": [
     "claude",
     "claude-code",
@@ -16,7 +16,10 @@
     "kitty",
     "wezterm",
     "git-worktree",
-    "cli"
+    "cli",
+    "iterm2",
+    "macos",
+    "linux"
   ],
   "homepage": "https://halitsever.github.io/claudegrid/",
   "bugs": "https://github.com/halitsever/claudegrid/issues",
@@ -34,7 +37,8 @@
     "dist",
     "assets",
     "docs/public/schema.json",
-    "docs/public/logo.svg"
+    "docs/public/logo.svg",
+    "docs/public/logo-512.png"
   ],
   "engines": {
     "node": ">=20"

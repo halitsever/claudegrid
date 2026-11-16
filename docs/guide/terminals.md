@@ -15,6 +15,7 @@ claudegrid has four backends. With `backend: "auto"`, the default, it picks:
 | Backend | Opens | With `--no-new-tab` | Exact grid | Needs |
 | --- | --- | --- | --- | --- |
 | `konsole` | a new tab when you run it in Konsole, otherwise a new window | a new window | yes | `konsole`, `qdbus6`, a D-Bus session |
+| `iterm2` | a new tab when you run it in iTerm2, otherwise a new window | a new window | even layouts only, see below | macOS, iTerm2 |
 | `tmux` | a new tmux window when you are in tmux, otherwise a new session | a separate session it switches to | yes | tmux 3.1+ |
 | `kitty` | a new kitty window | the same | kitty's grid layout | `kitty` |
 | `wezterm` | a new tab when you run it in WezTerm, otherwise a new window | a new window | yes | WezTerm running |
@@ -48,6 +49,14 @@ With `--no-new-tab`, or outside Konsole, claudegrid starts `konsole --separate` 
 The temporary profile copies your default Konsole profile, so fonts and colors stay the same.
 
 Every Konsole session knows its own number from `KONSOLE_DBUS_SESSION`, and claudegrid uses that to tell each pane which task it has.
+
+## iTerm2
+
+On macOS claudegrid drives iTerm2 with AppleScript: it opens a window, or a tab when you run it in iTerm2, and splits it into the grid. Each pane runs a one line script that starts `claudegrid pane` for that pane, so there is no quoting to go wrong. Pane titles show the pane names.
+
+iTerm2 can only split a pane in half. Layouts with 1, 2 or 4 columns and rows come out exact, a `3x2` grid has columns of 50, 25 and 25 percent. Use tmux inside iTerm2 (`-b tmux`) when you need three even columns.
+
+macOS asks once whether your terminal may control iTerm2. If you said no, allow it in **System Settings → Privacy & Security → Automation**.
 
 ## tmux
 

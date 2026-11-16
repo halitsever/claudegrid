@@ -20,7 +20,7 @@ claudegrid ui
 claudegrid desktop install
 ```
 
-This adds **claudegrid** to your application launcher (KDE, GNOME and any other desktop that reads `~/.local/share/applications`), with the claudegrid icon. Start it from there like any other app. `claudegrid desktop uninstall` removes it again.
+On Linux this adds **claudegrid** to your application launcher (KDE, GNOME and any other desktop that reads `~/.local/share/applications`), with the claudegrid icon. On macOS it creates `~/Applications/claudegrid.app`, which shows up in Launchpad and Spotlight. Start it from there like any other app. `claudegrid desktop uninstall` removes it again.
 
 ## What you can do in it
 
@@ -39,7 +39,7 @@ Mistakes show up while you type, with the same messages as the CLI. Two panes wi
 
 ## How it runs
 
-`claudegrid ui` starts a small web server on `127.0.0.1` with a random port and opens it as an app window in Chrome, Chromium, Brave or Edge, or in your default browser. Set `CLAUDEGRID_BROWSER` to pick another browser.
+`claudegrid ui` starts a small web server on `127.0.0.1` with a random port and opens it as an app window in Chrome, Chromium, Brave, Edge or Arc, or in your default browser. Set `CLAUDEGRID_BROWSER` to pick another browser.
 
 - Only your own machine can reach it, and every request needs a random token that is created at start and only appears in the link it opens.
 - Requests from other websites are refused, so a page you visit cannot start agents.
