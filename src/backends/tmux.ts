@@ -1,7 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { splitPercent } from "../layout.js";
 import { run, which } from "../exec.js";
-import { info } from "../ui.js";
 import type { Backend, LaunchContext } from "./types.js";
 
 /** tmux session names cannot contain dots or colons. */
@@ -70,11 +69,9 @@ export const tmux: Backend = {
     tmuxRun("set-option", "-w", "-t", created, "pane-border-format", " #{?pane_active,#[bold],}#{@claudegrid_name}#[default] ");
     tmuxRun("select-pane", "-t", created);
 
-    if (ctx.dryRun || inside) return inside ? "opened a new tmux window" : "";
-    if (ctx.detach || !process.stdin.isTTY) {
-      info(`started tmux session ${session}, attach with: tmux attach -t ${session}`);
-      return "";
-    }
+    if (ctx.dryRun) return "";
+    if (inside) return "opened a new tmux window";
+    if (ctx.detach || !ctx.interactive) return `started tmux session ${session}, attach with: tmux attach -t ${session}`;
     spawnSync("tmux", ["attach-session", "-t", `=${session}`], { stdio: "inherit" });
     return "";
   },

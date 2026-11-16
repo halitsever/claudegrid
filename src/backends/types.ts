@@ -21,6 +21,8 @@ export interface LaunchContext {
   /** Command that starts pane `index`. Without an index the pane works it out itself (Konsole). */
   paneCommand: (index?: number) => string[];
   detach: boolean;
+  /** False when nobody can attach to a terminal session, e.g. a launch from the web UI. */
+  interactive: boolean;
   dryRun: boolean;
   run: Runner;
 }

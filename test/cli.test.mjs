@@ -70,3 +70,10 @@ test("doctor runs and reports node", () => {
   const result = cli(["doctor"], { cwd: sandbox() });
   assert.match(result.stdout, /node\s+v\d+/);
 });
+
+test("desktop entry quotes paths for the Exec key", async () => {
+  const { desktopEntry } = await import("../dist/commands/desktop.js");
+  const entry = desktopEntry(["/usr/bin/node", "/home/a b/cli.js"]);
+  assert.match(entry, /^Exec="\/usr\/bin\/node" "\/home\/a b\/cli.js" "ui"$/m);
+  assert.match(entry, /^Icon=claudegrid$/m);
+});

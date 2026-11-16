@@ -1,7 +1,7 @@
 import { BACKENDS } from "../config.js";
 import { CliError } from "../ui.js";
 
-export const SUBCOMMANDS = ["init", "doctor", "presets", "worktrees", "completion", "help"];
+export const SUBCOMMANDS = ["ui", "desktop", "init", "doctor", "presets", "worktrees", "completion", "help"];
 export const LAUNCH_FLAGS = ["--layout", "--panes", "--backend", "--worktrees", "--no-worktrees", "--model", "--prompt", "--config", "--cwd", "--name", "--command", "--no-keep-shell", "--dry-run", "--json", "--detach", "--help", "--version"];
 const LAYOUTS = ["1x2", "2x1", "2x2", "3x1", "3x2", "3x3", "4x2"];
 
@@ -18,6 +18,7 @@ _claudegrid() {
     -C|--cwd) COMPREPLY=($(compgen -d -- "$cur")); return ;;
     completion) COMPREPLY=($(compgen -W "bash zsh fish" -- "$cur")); return ;;
     worktrees) COMPREPLY=($(compgen -W "list clean" -- "$cur")); return ;;
+    desktop) COMPREPLY=($(compgen -W "install uninstall" -- "$cur")); return ;;
   esac
   if [[ "$cur" == -* ]]; then
     COMPREPLY=($(compgen -W "${LAUNCH_FLAGS.join(" ")}" -- "$cur"))
@@ -35,6 +36,8 @@ function zsh(): string {
 _claudegrid() {
   local -a commands presets
   commands=(
+    'ui:open the claudegrid app in a window'
+    'desktop:add claudegrid to your app menu'
     'init:create a .claudegrid.json in this project'
     'doctor:check claude, terminals and config'
     'presets:list presets from your configs'
@@ -69,6 +72,7 @@ _claudegrid() {
       case $words[1] in
         completion) _values 'shell' bash zsh fish ;;
         worktrees) _values 'action' list clean ;;
+        desktop) _values 'action' install uninstall ;;
       esac ;;
   esac
 }
@@ -99,6 +103,7 @@ function fish(): string {
     'complete -c claudegrid -s d -l detach -d "do not attach to the new tmux session"',
     'complete -c claudegrid -n "__fish_seen_subcommand_from completion" -a "bash zsh fish"',
     'complete -c claudegrid -n "__fish_seen_subcommand_from worktrees" -a "list clean"',
+    'complete -c claudegrid -n "__fish_seen_subcommand_from desktop" -a "install uninstall"',
   ];
   return lines.join("\n") + "\n";
 }

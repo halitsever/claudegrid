@@ -29,6 +29,7 @@ Konsole, tmux, kitty and WezTerm. A prompt, model and git branch per pane.<br>
 - 🌿 **Git worktrees** - `--worktrees` puts every agent on its own branch and checkout, so they never edit the same files
 - 🧩 **Presets** - save teams of agents in `.claudegrid.json` and start them with `claudegrid review`
 - 🖥️ **Four terminals** - KDE Konsole, tmux (works anywhere, also over SSH), kitty and WezTerm
+- 🖱️ **Desktop app** - `claudegrid ui` opens a window to set up panes, preview and launch, no terminal needed
 - 🩺 **Safe to try** - `--dry-run` prints every command, `doctor` checks your setup, config typos get a "did you mean"
 - ⚡ **No runtime dependencies** - plain Node.js, shell completion for bash, zsh and fish
 
@@ -60,6 +61,19 @@ claudegrid -- --continue                     # pass flags to every claude
 claudegrid --dry-run                         # show what would run
 ```
 
+### Desktop app
+
+```sh
+claudegrid ui                  # open the app window
+claudegrid desktop install     # add claudegrid to your app menu
+```
+
+<p align="center">
+<img src="docs/public/ui-light.png" alt="The claudegrid app: settings on the left, the grid of panes in the middle, the selected pane's prompt on the right" width="860"/>
+</p>
+
+Pick a project, click a pane to give it a name, prompt and model, preview the commands and launch. It can also save presets and clean up worktrees. It runs on `127.0.0.1` behind a random token, so only you can reach it. [More about the app](https://halitsever.github.io/claudegrid/guide/app).
+
 ### Config and presets
 
 `claudegrid init` writes a `.claudegrid.json` you can edit:
@@ -85,7 +99,7 @@ claudegrid          # the four panes above
 claudegrid swarm    # the preset
 ```
 
-Read more: [configuration](https://halitsever.github.io/claudegrid/guide/configuration), [presets](https://halitsever.github.io/claudegrid/guide/presets), [worktrees](https://halitsever.github.io/claudegrid/guide/worktrees), [terminals](https://halitsever.github.io/claudegrid/guide/terminals), [CLI reference](https://halitsever.github.io/claudegrid/guide/cli).
+Read more: [desktop app](https://halitsever.github.io/claudegrid/guide/app), [configuration](https://halitsever.github.io/claudegrid/guide/configuration), [presets](https://halitsever.github.io/claudegrid/guide/presets), [worktrees](https://halitsever.github.io/claudegrid/guide/worktrees), [terminals](https://halitsever.github.io/claudegrid/guide/terminals), [CLI reference](https://halitsever.github.io/claudegrid/guide/cli).
 
 <p align="center">
 <a href="https://github.com/halitsever/claudegrid/issues"><img src="https://halitsever-api.vercel.app/api/issue"/></a>
