@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.4.0] - 2026-11-16
+
+### Added
+
+- A Terminal.app backend for macOS, `-b terminal`, that opens one tiled window per pane. `auto` falls back to it when no other terminal works, so claudegrid runs on a stock Mac
+- `--trust` and `"trust": true` mark every pane folder as trusted in Claude Code, so the panes skip its trust question
+- A "Supported terminals" table in the Readme
+
+### Fixed
+
+- iTerm2 counts as installed when claudegrid runs inside it, even outside `/Applications`
+
 ## [1.3.1] - 2026-11-16
 
 ### Changed
