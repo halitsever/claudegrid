@@ -8,6 +8,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - `claudegrid ui`: a desktop app in its own window. Pick a project, set the layout, model, terminal and worktrees, give every pane a name, prompt, model and folder, preview the commands and launch. It also saves project defaults and presets, manages worktrees and shows the doctor checks
 - `claudegrid desktop install` and `uninstall` to add the app to your application menu
+- A `.deb` package on every release, with completions and an app menu entry
 - The app server listens on 127.0.0.1 only, needs a random token on every request and refuses other hosts and origins
 
 ### Changed

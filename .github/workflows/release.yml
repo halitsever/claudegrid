@@ -34,12 +34,14 @@ jobs:
           GIT_COMMITTER_EMAIL: ci@example.com
       - name: pack
         run: mv "$(npm pack --silent)" claudegrid.tgz
+      - name: deb package
+        run: bash packaging/deb/build.sh claudegrid.tgz "${GITHUB_REF_NAME#v}" .
       - name: release notes from CHANGELOG.md
         run: awk -v v="${GITHUB_REF_NAME#v}" '$0 ~ "^## \\[?"v"\\]?" {on=1; next} /^## / {on=0} on' CHANGELOG.md > notes.md
       - name: GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" claudegrid.tgz --title "$GITHUB_REF_NAME" --notes-file notes.md
+        run: gh release create "$GITHUB_REF_NAME" claudegrid.tgz claudegrid.deb --title "$GITHUB_REF_NAME" --notes-file notes.md
       - name: npm publish
         if: env.NPM_TOKEN != ''
         env:

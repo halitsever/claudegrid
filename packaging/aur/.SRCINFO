@@ -1,0 +1,20 @@
+pkgbase = claudegrid
+	pkgdesc = Run several Claude Code agents side by side in Konsole, tmux, kitty or WezTerm
+	pkgver = 1.1.0
+	pkgrel = 1
+	url = https://github.com/halitsever/claudegrid
+	arch = any
+	license = MIT
+	makedepends = npm
+	depends = nodejs>=20
+	optdepends = tmux: tmux backend, works in any terminal
+	optdepends = konsole: KDE Konsole backend
+	optdepends = qt6-tools: qdbus6 for the Konsole backend
+	optdepends = kitty: kitty backend
+	optdepends = wezterm: WezTerm backend
+	optdepends = git: worktrees
+	noextract = claudegrid-1.1.0.tgz
+	source = claudegrid-1.1.0.tgz::https://github.com/halitsever/claudegrid/releases/download/v1.1.0/claudegrid.tgz
+	sha256sums = b60c8aadf5975f1ab2ed26cc543698ddfef2d2736ebf506e773b6a2f6d1dd0f6
+
+pkgname = claudegrid

@@ -41,7 +41,14 @@ Konsole, tmux, kitty and WezTerm. A prompt, model and git branch per pane.<br>
 npm install -g claudegrid
 ```
 
-or without npm on your PATH:
+Debian and Ubuntu:
+
+```sh
+curl -fLO https://github.com/halitsever/claudegrid/releases/latest/download/claudegrid.deb
+sudo apt install ./claudegrid.deb
+```
+
+or with the install script:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/halitsever/claudegrid/main/install.sh | bash
