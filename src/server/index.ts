@@ -81,7 +81,7 @@ function relativize(grid: GridConfig, base: string): GridConfig {
   return out;
 }
 
-const GRID_KEYS: (keyof GridConfig)[] = ["layout", "panes", "backend", "worktrees", "model", "args", "command", "keepShell", "newTab", "dir"];
+const GRID_KEYS: (keyof GridConfig)[] = ["layout", "panes", "backend", "worktrees", "model", "args", "command", "keepShell", "newTab", "trust", "dir"];
 
 function cleanGrid(input: unknown): GridConfig {
   if (typeof input !== "object" || input === null) throw new HttpError(400, "missing grid settings");

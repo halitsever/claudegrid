@@ -32,6 +32,8 @@ const LAUNCH_OPTIONS = {
   "no-keep-shell": { type: "boolean" },
   "new-tab": { type: "boolean" },
   "no-new-tab": { type: "boolean" },
+  trust: { type: "boolean" },
+  "no-trust": { type: "boolean" },
   "dry-run": { type: "boolean" },
   json: { type: "boolean" },
   detach: { type: "boolean", short: "d" },
@@ -55,13 +57,14 @@ ${b("options")}
   -m, --model <model>     model for every pane, e.g. opus or sonnet
   -w, --worktrees         give every pane its own git worktree and branch
       --no-worktrees      turn worktrees off when the config turns them on
-  -b, --backend <name>    auto, konsole, iterm2, tmux, kitty or wezterm ${d("(default auto)")}
+  -b, --backend <name>    auto, konsole, iterm2, tmux, kitty, wezterm or terminal ${d("(default auto)")}
   -C, --cwd <dir>         run from this directory
   -c, --config <file>     use this config file instead of .claudegrid.json
   -t, --name <name>       name for the window, tmux session and worktree group
       --command <cmd>     run another program instead of claude
       --no-keep-shell     close the pane when claude exits
       --no-new-tab        open a new window instead of a tab in this terminal
+      --trust             skip Claude Code's "trust this folder" question in every pane
   -d, --detach            start the tmux session without attaching
       --dry-run           print the plan and commands, open nothing
       --json              print the plan as JSON
@@ -206,6 +209,7 @@ async function main(argv: string[]): Promise<number> {
   if (values.layout && values.panes) throw new CliError("use either --layout or --panes, not both");
   if (values.worktrees && values["no-worktrees"]) throw new CliError("--worktrees and --no-worktrees cancel each other out");
   if (values["new-tab"] && values["no-new-tab"]) throw new CliError("--new-tab and --no-new-tab cancel each other out");
+  if (values.trust && values["no-trust"]) throw new CliError("--trust and --no-trust cancel each other out");
 
   await launch({
     cwd,
@@ -218,6 +222,7 @@ async function main(argv: string[]): Promise<number> {
     command: values.command,
     keepShell: values["keep-shell"] ? true : values["no-keep-shell"] ? false : undefined,
     newTab: values["new-tab"] ? true : values["no-new-tab"] ? false : undefined,
+    trust: values.trust ? true : values["no-trust"] ? false : undefined,
     name: values.name,
     prompts: values.prompt ?? [],
     extraArgs: passthrough,

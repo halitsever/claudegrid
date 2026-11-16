@@ -40,7 +40,7 @@ export const iterm2: Backend = {
   isCurrent: (env) => env.TERM_PROGRAM === "iTerm.app",
   check() {
     if (process.platform !== "darwin") return { ok: false, detail: "iTerm2 runs on macOS only" };
-    if (!installed()) return { ok: false, detail: "iTerm2 is not installed" };
+    if (!installed() && !iterm2.isCurrent(process.env)) return { ok: false, detail: "iTerm2 is not installed" };
     if (!which("osascript")) return { ok: false, detail: "osascript is missing" };
     return { ok: true, detail: "iTerm2 + AppleScript" };
   },

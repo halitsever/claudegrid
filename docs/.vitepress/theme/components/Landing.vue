@@ -58,6 +58,7 @@ const terminals = [
   { name: "tmux", note: "any terminal, over SSH" },
   { name: "kitty", note: "session file" },
   { name: "WezTerm", note: "wezterm cli" },
+  { name: "Terminal.app", note: "macOS, tiled windows" },
 ];
 </script>
 

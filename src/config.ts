@@ -3,7 +3,7 @@ import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { CliError, didYouMean } from "./ui.js";
 
-export const BACKENDS = ["auto", "konsole", "iterm2", "tmux", "kitty", "wezterm"] as const;
+export const BACKENDS = ["auto", "konsole", "iterm2", "tmux", "kitty", "wezterm", "terminal"] as const;
 export type BackendName = (typeof BACKENDS)[number];
 
 export const PROJECT_CONFIG_NAMES = [".claudegrid.json", "claudegrid.json"];
@@ -28,6 +28,8 @@ export interface GridConfig {
   keepShell?: boolean;
   /** Open the grid as a tab in the terminal claudegrid runs in, instead of a new window. */
   newTab?: boolean;
+  /** Mark pane folders as trusted in Claude Code so it skips the safety question. */
+  trust?: boolean;
   dir?: string;
 }
 
@@ -48,7 +50,7 @@ export interface LoadedConfig {
   data: ConfigFile;
 }
 
-const GRID_KEYS = ["layout", "panes", "backend", "worktrees", "model", "args", "command", "keepShell", "newTab", "dir"];
+const GRID_KEYS = ["layout", "panes", "backend", "worktrees", "model", "args", "command", "keepShell", "newTab", "trust", "dir"];
 const FILE_KEYS = [...GRID_KEYS, "$schema", "presets"];
 const PANE_KEYS = ["name", "dir", "prompt", "model", "args"];
 
@@ -79,7 +81,7 @@ function validateGrid(file: string, path: string, obj: Record<string, Json>, all
   const at = (k: string) => (path ? `${path}.${k}` : k);
   for (const k of ["layout", "model", "command", "dir"]) if (k in obj) checkString(file, at(k), obj[k]);
   if ("args" in obj) checkStringArray(file, at("args"), obj.args);
-  for (const k of ["worktrees", "keepShell", "newTab"]) if (k in obj && typeof obj[k] !== "boolean") fail(file, at(k), "must be true or false");
+  for (const k of ["worktrees", "keepShell", "newTab", "trust"]) if (k in obj && typeof obj[k] !== "boolean") fail(file, at(k), "must be true or false");
   if ("backend" in obj && !BACKENDS.includes(obj.backend as BackendName)) {
     fail(file, at("backend"), `must be one of ${BACKENDS.join(", ")}`, typeof obj.backend === "string" ? didYouMean(obj.backend, BACKENDS) : undefined);
   }
