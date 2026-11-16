@@ -64,7 +64,7 @@ ${b("options")}
       --command <cmd>     run another program instead of claude
       --no-keep-shell     close the pane when claude exits
       --no-new-tab        open a new window instead of a tab in this terminal
-      --trust             skip Claude Code's "trust this folder" question in every pane
+      --no-trust          let Claude Code ask its "trust this folder" question in every pane
   -d, --detach            start the tmux session without attaching
       --dry-run           print the plan and commands, open nothing
       --json              print the plan as JSON

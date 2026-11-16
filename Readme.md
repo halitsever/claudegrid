@@ -66,7 +66,7 @@ claudegrid -w -n 3                           # 3 agents on separate git worktree
 claudegrid -b tmux -d                        # tmux session in the background
 claudegrid -- --continue                     # pass flags to every claude
 claudegrid --dry-run                         # show what would run
-claudegrid --trust                           # skip Claude Code's "trust this folder" question
+claudegrid --no-trust                        # let Claude Code ask its "trust this folder" question
 ```
 
 ### Supported terminals

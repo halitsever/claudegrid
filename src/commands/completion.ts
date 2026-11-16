@@ -60,7 +60,7 @@ _claudegrid() {
     '--command[program to run instead of claude]:command:_command_names' \\
     '--no-keep-shell[close the pane when claude exits]' \\
     '--no-new-tab[open a new window instead of a tab]' \\
-    '--trust[skip the Claude Code folder trust question]' \\
+    '--no-trust[let Claude Code ask its folder trust question]' \\
     '--dry-run[print the plan without opening anything]' \\
     '--json[print the plan as JSON]' \\
     '(-d --detach)'{-d,--detach}'[do not attach to the new tmux session]' \\
@@ -101,7 +101,7 @@ function fish(): string {
     'complete -c claudegrid -l command -x -a "(__fish_complete_command)" -d "program to run instead of claude"',
     'complete -c claudegrid -l no-keep-shell -d "close the pane when claude exits"',
     'complete -c claudegrid -l no-new-tab -d "open a new window instead of a tab"',
-    'complete -c claudegrid -l trust -d "skip the Claude Code folder trust question"',
+    'complete -c claudegrid -l no-trust -d "let Claude Code ask its folder trust question"',
     'complete -c claudegrid -l dry-run -d "print the plan without opening anything"',
     'complete -c claudegrid -l json -d "print the plan as JSON"',
     'complete -c claudegrid -s d -l detach -d "do not attach to the new tmux session"',

@@ -105,8 +105,8 @@
     },
     "trust": {
       "type": "boolean",
-      "default": false,
-      "description": "Mark every pane folder as trusted in Claude Code, so it does not ask the trust question in each pane."
+      "default": true,
+      "description": "Mark every pane folder as trusted in Claude Code, so it does not ask the trust question in each pane. false lets it ask."
     }
   },
   "$defs": {
@@ -247,8 +247,8 @@
         },
         "trust": {
           "type": "boolean",
-          "default": false,
-          "description": "Mark every pane folder as trusted in Claude Code, so it does not ask the trust question in each pane."
+          "default": true,
+          "description": "Mark every pane folder as trusted in Claude Code, so it does not ask the trust question in each pane. false lets it ask."
         }
       }
     }
