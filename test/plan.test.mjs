@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { mkdirSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { mkdirSync, symlinkSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { test } from "node:test";
 import { buildPlan } from "../dist/plan.js";
@@ -54,4 +55,15 @@ test("worktrees sit next to the repo, one branch per pane", () => {
   assert.equal(front.cwd, join(front.worktree.path, "web"));
   assert.equal(second.worktree.branch, "claudegrid/review/pane-2");
   assert.equal(plan.name, "review");
+});
+
+test("worktrees work when the project is opened through a symlink", () => {
+  const base = sandbox();
+  const real = join(base, "real");
+  mkdirSync(real);
+  execFileSync("git", ["init", "-q", "-b", "main"], { cwd: real });
+  execFileSync("git", ["-c", "user.email=t@example.com", "-c", "user.name=t", "commit", "-q", "--allow-empty", "-m", "init"], { cwd: real });
+  symlinkSync(real, join(base, "link"));
+  const plan = buildPlan({ cwd: join(base, "link"), grid: { worktrees: true, panes: 2 } });
+  assert.equal(plan.panes.length, 2);
 });
