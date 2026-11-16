@@ -547,6 +547,32 @@
   }
 }
 
+/* App */
+.cg .app-band {
+  display: grid;
+  gap: 32px;
+  padding-block: 104px 0;
+}
+
+.cg .app-copy {
+  max-width: 640px;
+}
+
+.cg .app-copy p:not(.kicker) {
+  margin: 16px 0 0;
+  font-size: 16.5px;
+  line-height: 1.7;
+  color: var(--vp-c-text-2);
+}
+
+.cg .app-shot img {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid var(--vp-c-divider);
+  box-shadow: 0 40px 90px -40px rgba(232, 87, 60, 0.45);
+}
+
 /* Safety */
 .cg .safety {
   padding-block: 104px 0;

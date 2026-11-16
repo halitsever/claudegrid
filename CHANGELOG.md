@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-11-16
+
+### Added
+
+- `claudegrid ui`: a desktop app in its own window. Pick a project, set the layout, model, terminal and worktrees, give every pane a name, prompt, model and folder, preview the commands and launch. It also saves project defaults and presets, manages worktrees and shows the doctor checks
+- `claudegrid desktop install` and `uninstall` to add the app to your application menu
+- The app server listens on 127.0.0.1 only, needs a random token on every request and refuses other hosts and origins
+
+### Changed
+
+- `--json` output also lists the grid's `columns`
+
 ## [1.0.0] - 2026-11-16
 
 claudegrid is now a Node.js CLI instead of a single bash script.

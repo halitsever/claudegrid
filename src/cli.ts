@@ -3,12 +3,15 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseArgs, type ParseArgsConfig } from "node:util";
 import { completion, SUBCOMMANDS } from "./commands/completion.js";
+import { installDesktop, uninstallDesktop } from "./commands/desktop.js";
 import { doctor } from "./commands/doctor.js";
 import { init } from "./commands/init.js";
 import { launch } from "./commands/launch.js";
 import { cleanWorktrees, listWorktrees } from "./commands/worktrees.js";
 import { loadConfigs, presetNames } from "./config.js";
 import { runPane } from "./pane.js";
+import { openUi } from "./server/open.js";
+import { startUiServer } from "./server/index.js";
 import { CliError, didYouMean, printError, style } from "./ui.js";
 
 const version = (JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as { version: string }).version;
@@ -63,6 +66,8 @@ ${b("options")}
   -v, --version           show the version
 
 ${b("commands")}
+  ui                      open the claudegrid app in a window ${d("(--port, --no-open, -C)")}
+  desktop install         add claudegrid to your app menu ${d("(desktop uninstall removes it)")}
   init [--force]          create .claudegrid.json with example panes and presets
   doctor                  check claude, terminals and config files
   presets [--names]       list presets from your user and project config
@@ -142,6 +147,37 @@ async function main(argv: string[]): Promise<number> {
     case "completion":
       process.stdout.write(completion(rest[0]));
       return 0;
+    case "ui": {
+      const { values } = parse(rest, { port: { type: "string" }, "no-open": { type: "boolean" }, cwd: { type: "string", short: "C" }, "keep-alive": { type: "boolean" } });
+      const port = values.port === undefined ? undefined : Number(values.port);
+      if (port !== undefined && (!Number.isInteger(port) || port < 0 || port > 65535)) throw new CliError(`invalid port "${values.port}"`);
+      const open = !values["no-open"];
+      // A window we opened ourselves can close the server when it goes away. A server started with --no-open waits for you.
+      const stopWhenIdle = open && !values["keep-alive"];
+      const server = await startUiServer({
+        cwd: resolve(values.cwd ?? "."),
+        port,
+        version,
+        onIdle: stopWhenIdle ? () => void server.close().then(() => process.exit(0)) : undefined,
+      });
+      process.stdout.write(`${style.brand("▦ claudegrid ui")} ${style.dim(`v${version}`)}\n  ${server.url}\n`);
+      if (open) {
+        const browser = openUi(server.url);
+        process.stdout.write(style.dim(browser ? `  opened with ${browser}${stopWhenIdle ? ", stops when the window closes" : ""}\n` : "  open the link above in your browser\n"));
+      }
+      process.stdout.write(style.dim("  Ctrl+C to stop\n"));
+      const stop = () => void server.close().then(() => process.exit(0));
+      process.on("SIGINT", stop);
+      process.on("SIGTERM", stop);
+      return new Promise<number>(() => {});
+    }
+    case "desktop": {
+      const action = rest[0] ?? "install";
+      if (action === "install") installDesktop();
+      else if (action === "uninstall") uninstallDesktop();
+      else throw new CliError(`unknown desktop action "${action}"`, "use `claudegrid desktop install` or `claudegrid desktop uninstall`");
+      return 0;
+    }
     case "help":
       process.stdout.write(help());
       return 0;

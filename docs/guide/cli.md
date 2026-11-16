@@ -33,6 +33,21 @@ claudegrid [preset] [options] [-- claude flags]
 
 Everything after `--` is passed to every `claude`.
 
+## claudegrid ui
+
+Opens the [desktop app](./app) in its own window.
+
+| Option | Description |
+| --- | --- |
+| `-C, --cwd <dir>` | project to open first |
+| `--port <port>` | fixed port instead of a random one |
+| `--no-open` | print the link without opening a window |
+| `--keep-alive` | keep the server running after the window closes |
+
+## claudegrid desktop
+
+`claudegrid desktop install` adds claudegrid to your app menu. `claudegrid desktop uninstall` removes it.
+
 ## claudegrid init
 
 Creates `.claudegrid.json` at the root of the git repo, or in the current directory outside a repo. It has four example panes and two presets. `--force` overwrites an existing file.

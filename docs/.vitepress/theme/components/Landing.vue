@@ -196,6 +196,20 @@ claudegrid/grid/pane-3  <span class="ok">clean</span>
       </div>
     </section>
 
+    <!-- App -->
+    <section class="app-band wrap reveal">
+      <div class="app-copy">
+        <p class="kicker">Desktop app</p>
+        <h2>Prefer clicking? There is an app</h2>
+        <p>Run <code>claudegrid ui</code> or add it to your app menu with <code>claudegrid desktop install</code>. Pick a project, click a pane to give it a task, preview the commands and launch. Everything stays on your machine.</p>
+        <a class="more" :href="withBase('/guide/app')">Desktop app guide →</a>
+      </div>
+      <div class="app-shot">
+        <img class="light-only" :src="withBase('/ui-light.png')" alt="The claudegrid app with a 2x2 grid of panes and a pane editor" width="1400" height="860" loading="lazy" />
+        <img class="dark-only" :src="withBase('/ui-dark.png')" alt="The claudegrid app in dark mode" width="1400" height="860" loading="lazy" />
+      </div>
+    </section>
+
     <!-- Safety -->
     <section class="safety wrap reveal">
       <p class="kicker center">Safe to try</p>

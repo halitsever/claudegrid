@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>claudegrid</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect x='12' y='12' width='48' height='48' rx='14' fill='%23ee7a4c'/%3E%3Crect x='68' y='12' width='48' height='48' rx='14' fill='%23f8c9ab'/%3E%3Crect x='12' y='68' width='48' height='48' rx='14' fill='%23f8c9ab'/%3E%3Crect x='68' y='68' width='48' height='48' rx='14' fill='%23f2946c'/%3E%3C/svg%3E">
+<style>
+/* Three column workbench: setup on the left, the grid in the middle, the selected pane on the right. */
+:root {
+  --bg: #fbf8f5; --panel: #ffffff; --sunk: #f4eee9; --line: #e9e0d9; --fg: #2a2421; --muted: #7a6a60; --faint: #a8988e;
+  --accent: #e8573c; --accent-2: #c2410c; --accent-soft: rgba(232, 87, 60, .11); --amber: #ffb36b; --cell: #f8c9ab; --cell-fg: #7a3a22;
+  --ok: #2f8f4e; --warn: #b7791f; --bad: #c53030; --term: #171412; --term-fg: #e7ddd6; --term-muted: #9c8b80;
+  --shadow: 0 1px 2px rgba(60, 30, 10, .06), 0 8px 24px -12px rgba(60, 30, 10, .18);
+  --mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", "Inter", Roboto, "Noto Sans", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12100f; --panel: #1b1715; --sunk: #231e1b; --line: #2f2724; --fg: #ece4de; --muted: #a39087; --faint: #75665e;
+    --accent: #ff8a5c; --accent-2: #ffb36b; --accent-soft: rgba(255, 138, 92, .14); --cell: #3a2a22; --cell-fg: #f8c9ab;
+    --ok: #7ccf8a; --warn: #f2c46d; --bad: #ff6b6b; --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px -14px rgba(0, 0, 0, .6);
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--fg); font: 14px/1.45 var(--sans); display: flex; flex-direction: column; overflow: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code, .mono { font-family: var(--mono); font-size: 12.5px; }
+[hidden] { display: none !important; }
+
+/* Top bar */
+.top { display: flex; align-items: center; gap: 14px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 15px; letter-spacing: -.01em; }
+.brand svg { width: 22px; height: 22px; }
+.project { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; max-width: 560px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--sunk); text-align: left; }
+.project:hover { border-color: var(--accent); }
+.project .path { font-family: var(--mono); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: rtl; text-align: left; flex: 1; }
+.project .badge { flex: none; }
+.tabs { display: flex; gap: 2px; margin-left: auto; padding: 3px; border-radius: 10px; background: var(--sunk); }
+.tabs button { border: 0; background: none; padding: 6px 12px; border-radius: 8px; color: var(--muted); font-weight: 600; font-size: 13px; }
+.tabs button[aria-selected="true"] { background: var(--panel); color: var(--fg); box-shadow: var(--shadow); }
+.ver { color: var(--faint); font-size: 12px; }
+
+/* Shared controls */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 600; background: var(--accent-soft); color: var(--accent-2); white-space: nowrap; }
+.badge.ok { background: rgba(47, 143, 78, .12); color: var(--ok); }
+.badge.warn { background: rgba(183, 121, 31, .14); color: var(--warn); }
+.badge.muted { background: var(--sunk); color: var(--muted); }
+.field { display: grid; gap: 6px; }
+.field > span, .label { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); min-width: 0; }
+input:hover, select:hover, textarea:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+textarea { resize: vertical; min-height: 120px; line-height: 1.5; }
+.hint { font-size: 12px; color: var(--faint); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel); font-weight: 600; font-size: 13px; white-space: nowrap; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { filter: brightness(1.06); }
+.btn.big { padding: 10px 22px; font-size: 14px; }
+.btn.small { padding: 5px 10px; font-size: 12px; }
+.btn.danger { color: var(--bad); }
+.btn:disabled { opacity: .5; cursor: not-allowed; filter: none; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips button { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.chips button.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-2); font-weight: 700; }
+.stepper { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--panel); }
+.stepper button { border: 0; background: none; width: 30px; height: 32px; font-size: 16px; color: var(--muted); }
+.stepper button:hover { background: var(--sunk); color: var(--fg); }
+.stepper output { flex: 1; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.toggle { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+.toggle input { appearance: none; flex: none; width: 34px; height: 20px; margin: 1px 0 0; border-radius: 999px; background: var(--line); position: relative; transition: background .15s; cursor: pointer; }
+.toggle input::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .2); transition: transform .15s; }
+.toggle input:checked { background: var(--accent); }
+.toggle input:checked::after { transform: translateX(14px); }
+.toggle b { display: block; font-weight: 600; }
+.toggle small { color: var(--faint); font-size: 12px; }
+
+/* Launch view */
+main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.view { flex: 1; min-height: 0; }
+.launch { display: grid; grid-template-columns: 290px minmax(0, 1fr) 330px; }
+.side { overflow-y: auto; padding: 16px; display: grid; align-content: start; gap: 18px; background: var(--panel); border-right: 1px solid var(--line); }
+.editor { border-right: 0; border-left: 1px solid var(--line); }
+.stage { display: flex; flex-direction: column; min-width: 0; padding: 18px; gap: 12px; }
+.stage-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.stage-head h1 { margin: 0; font-size: 17px; letter-spacing: -.01em; }
+.stage-head .sub { color: var(--muted); font-size: 13px; }
+.grid { flex: 1; min-height: 260px; display: flex; gap: 10px; padding: 10px; border-radius: 14px; background: var(--term); border: 1px solid #2e2623; box-shadow: var(--shadow); }
+.col { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.pane { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border-radius: 10px; border: 1px solid #2e2623; background: #1f1a17; color: var(--term-fg); text-align: left; overflow: hidden; transition: border-color .15s, transform .15s; font-family: var(--mono); font-size: 12px; }
+.pane:hover { border-color: #5a463c; }
+.pane.sel { border-color: #ff8a5c; box-shadow: 0 0 0 1px rgba(255, 138, 92, .4); }
+.pane .ph { display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; }
+.pane .ph .n { color: #ff8a5c; }
+.pane .ph .nm { font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
+.pane .ph .tag { margin-left: auto; padding: 0 6px; border-radius: 5px; background: #2e2623; color: var(--term-muted); font-size: 10.5px; }
+.pane .pr { color: var(--term-fg); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; line-height: 1.5; }
+.pane .pr::before { content: "> "; color: #ffb36b; font-weight: 700; }
+.pane .pr.empty { color: var(--term-muted); }
+.pane .pr.empty::before { content: ""; }
+.pane .meta { margin-top: auto; color: var(--term-muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pane .meta .br { color: #7cc4d6; }
+.editor h2 { margin: 0; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+.editor h2 .num { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 7px; background: linear-gradient(135deg, var(--amber), var(--accent)); color: #fff; font-size: 12px; }
+.with-btn { display: flex; gap: 6px; }
+
+/* Footer */
+.foot { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-top: 1px solid var(--line); background: var(--panel); }
+.status { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.status .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+.status.error { color: var(--bad); }
+.status.error .dot { background: var(--bad); }
+.status .text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Worktrees and health */
+.page { overflow-y: auto; padding: 22px; }
+.page-inner { max-width: 920px; margin: 0 auto; display: grid; gap: 16px; }
+.page h1 { margin: 0; font-size: 20px; letter-spacing: -.01em; }
+.card { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); box-shadow: var(--shadow); overflow: hidden; }
+.card-head { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.card-head h2 { margin: 0; font-size: 14px; }
+.list { display: grid; }
+.item { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 11px 16px; border-bottom: 1px solid var(--line); }
+.item:last-child { border-bottom: 0; }
+.item .t { font-weight: 600; overflow-wrap: anywhere; }
+.item .s { color: var(--muted); font-size: 12.5px; overflow-wrap: anywhere; }
+.mark { width: 20px; text-align: center; font-weight: 700; }
+.mark.ok { color: var(--ok); } .mark.warn { color: var(--warn); } .mark.fail { color: var(--bad); } .mark.info { color: var(--faint); }
+.empty-state { padding: 34px 16px; text-align: center; color: var(--muted); }
+.spacer { flex: 1; }
+
+/* Dialogs */
+dialog { border: 1px solid var(--line); border-radius: 14px; padding: 0; background: var(--panel); color: var(--fg); box-shadow: 0 30px 80px -20px rgba(0, 0, 0, .45); width: min(680px, calc(100vw - 32px)); max-height: calc(100vh - 64px); }
+dialog::backdrop { background: rgba(20, 12, 8, .45); backdrop-filter: blur(2px); }
+.dlg { display: flex; flex-direction: column; max-height: calc(100vh - 66px); }
+.dlg-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.dlg-head h2 { margin: 0; font-size: 15px; flex: 1; }
+.dlg-body { padding: 16px 18px; overflow-y: auto; display: grid; gap: 14px; }
+.dlg-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--line); }
+.x { border: 0; background: none; font-size: 20px; line-height: 1; color: var(--muted); padding: 2px 6px; border-radius: 6px; }
+.x:hover { background: var(--sunk); }
+pre.term { margin: 0; padding: 14px 16px; border-radius: 10px; background: var(--term); color: var(--term-fg); font: 12px/1.65 var(--mono); overflow-x: auto; white-space: pre; }
+pre.term .c { color: var(--term-muted); }
+.crumbs { display: flex; flex-wrap: wrap; gap: 2px; align-items: center; font-family: var(--mono); font-size: 12.5px; }
+.crumbs button { border: 0; background: none; padding: 2px 4px; border-radius: 5px; color: var(--muted); }
+.crumbs button:hover { background: var(--sunk); color: var(--fg); }
+.crumbs button:last-child { color: var(--fg); font-weight: 700; }
+.dirs { border: 1px solid var(--line); border-radius: 10px; max-height: 340px; overflow-y: auto; }
+.dirs button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; border: 0; border-bottom: 1px solid var(--line); background: none; text-align: left; }
+.dirs button:last-child { border-bottom: 0; }
+.dirs button:hover { background: var(--sunk); }
+.dirs .fname { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recent { display: flex; flex-wrap: wrap; gap: 6px; }
+.recent button { max-width: 100%; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); font-family: var(--mono); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recent button:hover { border-color: var(--accent); }
+.seg { display: inline-flex; padding: 3px; gap: 2px; border-radius: 9px; background: var(--sunk); }
+.seg button { border: 0; background: none; padding: 5px 12px; border-radius: 7px; font-weight: 600; font-size: 13px; color: var(--muted); }
+.seg button.on { background: var(--panel); color: var(--fg); box-shadow: var(--shadow); }
+
+/* Toasts */
+.toasts { position: fixed; right: 16px; bottom: 70px; display: grid; gap: 8px; z-index: 10; }
+.toast { max-width: 420px; padding: 11px 14px; border-radius: 10px; background: var(--term); color: var(--term-fg); box-shadow: var(--shadow); font-size: 13px; animation: in .2s ease-out; }
+.toast.ok { border-left: 3px solid #7ccf8a; } .toast.bad { border-left: 3px solid #ff6b6b; }
+.toast small { display: block; color: var(--term-muted); margin-top: 4px; white-space: pre-wrap; }
+@keyframes in { from { opacity: 0; transform: translateY(6px); } }
+
+@media (max-width: 1100px) { .launch { grid-template-columns: 260px minmax(0, 1fr) 290px; } }
+@media (max-width: 860px) {
+  body { overflow: auto; }
+  .launch { grid-template-columns: minmax(0, 1fr); }
+  .side, .editor { border: 0; border-bottom: 1px solid var(--line); }
+  .grid { min-height: 320px; }
+  .top { flex-wrap: wrap; }
+  .tabs { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 128 128" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb36b"/><stop offset="1" stop-color="#e8573c"/></linearGradient></defs><rect x="12" y="12" width="48" height="48" rx="14" fill="url(#lg)"/><rect x="68" y="12" width="48" height="48" rx="14" fill="#f8c9ab"/><rect x="12" y="68" width="48" height="48" rx="14" fill="#f8c9ab"/><rect x="68" y="68" width="48" height="48" rx="14" fill="#f2946c"/></svg>
+    claudegrid
+  </div>
+  <button class="project" id="projectBtn" type="button" title="Change project folder">
+    <span class="label">Project</span><span class="path" id="projectPath">…</span><span class="badge muted" id="projectBadge" hidden></span>
+  </button>
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button role="tab" aria-selected="true" data-view="launch" type="button">Launch</button>
+    <button role="tab" aria-selected="false" data-view="worktrees" type="button">Worktrees</button>
+    <button role="tab" aria-selected="false" data-view="health" type="button">Health</button>
+  </nav>
+  <span class="ver" id="ver"></span>
+</header>
+
+<main>
+  <!-- Launch -->
+  <section class="view launch" id="view-launch">
+    <aside class="side" aria-label="Grid settings">
+      <label class="field"><span>Preset</span>
+        <select id="preset"><option value="">Project defaults</option></select>
+        <small class="hint" id="presetHint"></small>
+      </label>
+
+      <div class="field">
+        <span>Layout</span>
+        <div class="chips" id="layoutChips"></div>
+        <div class="row2">
+          <div><div class="hint">Columns</div><div class="stepper"><button type="button" data-step="cols" data-d="-1" aria-label="Fewer columns">−</button><output id="cols">2</output><button type="button" data-step="cols" data-d="1" aria-label="More columns">+</button></div></div>
+          <div><div class="hint">Rows</div><div class="stepper"><button type="button" data-step="rows" data-d="-1" aria-label="Fewer rows">−</button><output id="rows">2</output><button type="button" data-step="rows" data-d="1" aria-label="More rows">+</button></div></div>
+        </div>
+        <small class="hint" id="layoutHint"></small>
+      </div>
+
+      <label class="field"><span>Model</span>
+        <select id="model">
+          <option value="">Claude Code default</option><option value="opus">opus</option><option value="sonnet">sonnet</option><option value="haiku">haiku</option><option value="__custom">Other…</option>
+        </select>
+        <input type="text" id="modelCustom" placeholder="model name" hidden>
+      </label>
+
+      <label class="field"><span>Terminal</span>
+        <select id="backend"></select>
+      </label>
+
+      <label class="toggle"><input type="checkbox" id="worktrees"><span><b>Git worktrees</b><small>Each pane gets its own branch and checkout</small></span></label>
+      <label class="toggle"><input type="checkbox" id="keepShell" checked><span><b>Keep shell</b><small>Open your shell when claude exits</small></span></label>
+
+      <label class="field"><span>Claude flags for every pane</span>
+        <input type="text" id="args" class="mono" placeholder="--permission-mode plan">
+      </label>
+
+      <details>
+        <summary class="label" style="cursor:pointer">Advanced</summary>
+        <div class="field" style="margin-top:10px">
+          <label class="field"><span>Program</span><input type="text" id="command" class="mono" placeholder="claude"></label>
+          <small class="hint">Run something else in every pane, for example another agent CLI.</small>
+        </div>
+      </details>
+    </aside>
+
+    <section class="stage" aria-label="Grid preview">
+      <div class="stage-head"><h1 id="gridTitle">2x2 grid</h1><span class="sub" id="gridSub">Click a pane to give it a name, a task and a model.</span></div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <aside class="side editor" aria-label="Pane settings" id="editor">
+      <h2><span class="num" id="paneNum">1</span><span id="paneHeading">Pane 1</span></h2>
+      <label class="field"><span>Name</span><input type="text" id="paneName" placeholder="pane-1"></label>
+      <label class="field"><span>First prompt</span><textarea id="panePrompt" placeholder="What should this agent work on? Leave empty for a plain session."></textarea></label>
+      <label class="field"><span>Model</span>
+        <select id="paneModel"><option value="">Same as the grid</option><option value="opus">opus</option><option value="sonnet">sonnet</option><option value="haiku">haiku</option></select>
+      </label>
+      <div class="field"><span>Folder</span>
+        <div class="with-btn"><input type="text" id="paneDir" class="mono" placeholder="project folder"><button class="btn small" type="button" id="paneDirBtn">Browse</button></div>
+        <small class="hint">Relative to the project. With worktrees on it must be inside the repo.</small>
+      </div>
+      <label class="field"><span>Claude flags for this pane</span><input type="text" id="paneArgs" class="mono" placeholder="--verbose"></label>
+      <div class="with-btn"><button class="btn small" type="button" id="paneClear">Clear pane</button><button class="btn small" type="button" id="paneCopy">Copy prompt to all</button></div>
+    </aside>
+  </section>
+
+  <!-- Worktrees -->
+  <section class="view page" id="view-worktrees" hidden>
+    <div class="page-inner">
+      <h1>Worktrees</h1>
+      <div class="card">
+        <div class="card-head">
+          <h2 id="wtTitle">claudegrid branches</h2><span class="spacer"></span>
+          <label class="toggle" style="align-items:center"><input type="checkbox" id="wtForce"><span><b>Force</b></span></label>
+          <label class="toggle" style="align-items:center"><input type="checkbox" id="wtKeep"><span><b>Keep branches</b></span></label>
+          <button class="btn small" type="button" id="wtRefresh">Refresh</button>
+          <button class="btn small danger" type="button" id="wtClean">Clean selected</button>
+        </div>
+        <div class="list" id="wtList"></div>
+      </div>
+      <p class="hint">Without Force, worktrees with uncommitted changes are skipped and branches with unmerged commits are kept.</p>
+    </div>
+  </section>
+
+  <!-- Health -->
+  <section class="view page" id="view-health" hidden>
+    <div class="page-inner">
+      <div style="display:flex;align-items:center;gap:10px"><h1>Health</h1><span class="spacer"></span><button class="btn small" type="button" id="healthRefresh">Check again</button></div>
+      <div id="health"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="status" id="status" role="status" aria-live="polite"><span class="dot"></span><span class="text" id="statusText">Loading…</span></div>
+  <button class="btn" type="button" id="previewBtn">Preview</button>
+  <button class="btn" type="button" id="saveBtn">Save…</button>
+  <button class="btn primary big" type="button" id="launchBtn">Launch</button>
+</footer>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<dialog id="dirDialog">
+  <div class="dlg">
+    <div class="dlg-head"><h2 id="dirTitle">Choose a project folder</h2><button class="x" type="button" data-close aria-label="Close">×</button></div>
+    <div class="dlg-body">
+      <div id="recentWrap"><div class="label" style="margin-bottom:6px">Recent</div><div class="recent" id="recent"></div></div>
+      <div class="crumbs" id="crumbs"></div>
+      <div class="with-btn"><input type="text" id="dirInput" class="mono" placeholder="/path/to/project"><button class="btn small" type="button" id="dirGo">Go</button></div>
+      <div class="dirs" id="dirs"></div>
+    </div>
+    <div class="dlg-foot"><label class="toggle" style="margin-right:auto;align-items:center"><input type="checkbox" id="dirHidden"><span><b>Hidden folders</b></span></label><button class="btn" type="button" data-close>Cancel</button><button class="btn primary" type="button" id="dirUse">Use this folder</button></div>
+  </div>
+</dialog>
+
+<dialog id="previewDialog">
+  <div class="dlg">
+    <div class="dlg-head"><h2>Preview</h2><button class="x" type="button" data-close aria-label="Close">×</button></div>
+    <div class="dlg-body"><pre class="term" id="previewPlan"></pre><div class="label">Commands</div><pre class="term" id="previewSteps"></pre></div>
+    <div class="dlg-foot"><button class="btn" type="button" data-close>Close</button><button class="btn primary" type="button" id="previewLaunch">Launch</button></div>
+  </div>
+</dialog>
+
+<dialog id="saveDialog">
+  <div class="dlg">
+    <div class="dlg-head"><h2>Save these settings</h2><button class="x" type="button" data-close aria-label="Close">×</button></div>
+    <div class="dlg-body">
+      <div class="seg" role="radiogroup" aria-label="Save as"><button type="button" class="on" data-mode="grid" role="radio" aria-checked="true">Project defaults</button><button type="button" data-mode="preset" role="radio" aria-checked="false">New preset</button></div>
+      <p class="hint" id="saveWhere"></p>
+      <div id="presetFields" hidden class="field" style="gap:12px">
+        <label class="field"><span>Preset name</span><input type="text" id="saveName" placeholder="review"></label>
+        <label class="field"><span>Description</span><input type="text" id="saveDesc" placeholder="Three reviewers with different focus"></label>
+      </div>
+    </div>
+    <div class="dlg-foot"><button class="btn" type="button" data-close>Cancel</button><button class="btn primary" type="button" id="saveGo">Save</button></div>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+const BOOT = __CLAUDEGRID_BOOT__;
+const $ = (id) => document.getElementById(id);
+const LAYOUTS = ["2x1", "2x2", "3x1", "3x2", "1x3", "4x2", "3x3"];
+const MODELS = ["opus", "sonnet", "haiku"];
+
+const state = {
+  cwd: BOOT.cwd, info: null, preset: "",
+  layout: "2x2", panes: [], model: "", backend: "auto", worktrees: false, keepShell: true, args: "", command: "",
+  selected: 0, plan: null, planError: null, busy: false,
+};
+
+/* ---------- api ---------- */
+async function api(method, path, body) {
+  const res = await fetch(path, { method, headers: { "content-type": "application/json", "x-claudegrid-token": BOOT.token }, body: body === undefined ? undefined : JSON.stringify(body) });
+  const data = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+  if (!res.ok) { const e = new Error(data.error || `HTTP ${res.status}`); e.hint = data.hint; throw e; }
+  return data;
+}
+const q = (params) => "?" + new URLSearchParams(params).toString();
+
+/* ---------- helpers ---------- */
+function columnsFor(spec) {
+  const m = /^\s*(\d+)\s*[x×]\s*(\d+)\s*$/i.exec(String(spec));
+  if (m) return Array(Number(m[1])).fill(Number(m[2]));
+  const n = Math.max(1, Math.min(16, Number(spec) || 4));
+  const cols = Math.ceil(Math.sqrt(n)), rows = Math.ceil(n / cols);
+  const columns = Array(cols).fill(rows);
+  for (let extra = cols * rows - n, i = cols - 1; extra > 0; extra--, i--) columns[i]--;
+  return columns;
+}
+const total = () => columnsFor(state.layout).reduce((a, b) => a + b, 0);
+/** Reading order, same as the CLI: across the top row first. */
+function cellOrder(columns) {
+  const out = [], rows = Math.max(...columns);
+  for (let r = 0; r < rows; r++) columns.forEach((h, c) => { if (r < h) out.push({ c, r }); });
+  return out;
+}
+/** Splits a flags field like a shell would: spaces separate, quotes group. */
+function splitArgs(text) {
+  const out = []; let cur = "", quote = null, has = false;
+  for (const ch of text) {
+    if (quote) { if (ch === quote) quote = null; else cur += ch; continue; }
+    if (ch === "'" || ch === '"') { quote = ch; has = true; continue; }
+    if (/\s/.test(ch)) { if (cur || has) out.push(cur); cur = ""; has = false; continue; }
+    cur += ch;
+  }
+  if (cur || has) out.push(cur);
+  return out;
+}
+const joinArgs = (args) => (args || []).map((a) => (/^[\w@%+=:,./-]+$/.test(a) ? a : `'${a.replace(/'/g, `'\\''`)}'`)).join(" ");
+const tilde = (p) => (state.info && p && (p === state.info.home || p.startsWith(state.info.home + "/")) ? "~" + p.slice(state.info.home.length) : p);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+let toastTimer;
+function toast(kind, text, detail) {
+  const el = document.createElement("div");
+  el.className = `toast ${kind}`;
+  el.innerHTML = `${esc(text)}${detail ? `<small>${esc(detail)}</small>` : ""}`;
+  $("toasts").append(el);
+  setTimeout(() => el.remove(), kind === "bad" ? 9000 : 6000);
+}
+function setPanesLength(n) {
+  while (state.panes.length < n) state.panes.push({});
+  state.panes.length = n;
+  if (state.selected >= n) state.selected = n - 1;
+}
+
+/* ---------- grid config <-> state ---------- */
+function gridFromState() {
+  const panes = state.panes.map((p) => {
+    const o = {};
+    for (const k of ["name", "prompt", "model", "dir"]) if (p[k] && String(p[k]).trim()) o[k] = String(p[k]).trim();
+    const a = splitArgs(p.args || "");
+    if (a.length) o.args = a;
+    return o;
+  });
+  const grid = { layout: state.layout, panes, backend: state.backend, worktrees: state.worktrees, keepShell: state.keepShell };
+  if (state.model) grid.model = state.model;
+  const args = splitArgs(state.args);
+  if (args.length) grid.args = args;
+  if (state.command.trim()) grid.command = state.command.trim();
+  return grid;
+}
+function loadGrid(grid) {
+  const panes = Array.isArray(grid.panes) ? grid.panes : [];
+  state.layout = grid.layout || (typeof grid.panes === "number" ? String(grid.panes) : panes.length ? String(panes.length) : "2x2");
+  if (/^\d+$/.test(state.layout)) {
+    const cols = columnsFor(state.layout);
+    if (cols.every((h) => h === cols[0])) state.layout = `${cols.length}x${cols[0]}`;
+  }
+  state.panes = panes.map((p) => ({ name: p.name || "", prompt: p.prompt || "", model: p.model || "", dir: p.dir ? tilde(p.dir) : "", args: joinArgs(p.args) }));
+  setPanesLength(total());
+  state.model = grid.model || "";
+  state.backend = grid.backend || "auto";
+  state.worktrees = Boolean(grid.worktrees);
+  state.keepShell = grid.keepShell !== false;
+  state.args = joinArgs(grid.args);
+  state.command = grid.command || "";
+  state.selected = 0;
+}
+
+/* ---------- render ---------- */
+function renderSettings() {
+  const cols = columnsFor(state.layout);
+  const even = cols.every((h) => h === cols[0]);
+  $("layoutChips").innerHTML = LAYOUTS.map((l) => `<button type="button" class="${l === state.layout ? "on" : ""}" data-layout="${l}">${l}</button>`).join("");
+  $("cols").textContent = cols.length;
+  $("rows").textContent = Math.max(...cols);
+  $("layoutHint").textContent = even ? `${total()} panes` : `${total()} panes in ${cols.length} columns (${cols.join(" + ")})`;
+  const known = ["", ...MODELS];
+  $("model").value = known.includes(state.model) ? state.model : "__custom";
+  $("modelCustom").hidden = known.includes(state.model);
+  if (!known.includes(state.model)) $("modelCustom").value = state.model;
+  $("backend").value = state.backend;
+  $("worktrees").checked = state.worktrees;
+  $("keepShell").checked = state.keepShell;
+  $("args").value = state.args;
+  $("command").value = state.command;
+  $("preset").value = state.preset;
+  const p = state.info?.presets.find((x) => x.name === state.preset);
+  $("presetHint").textContent = p ? [p.description, `from the ${p.source} config`].filter(Boolean).join(" · ") : "";
+}
+
+function renderGrid() {
+  const columns = columnsFor(state.layout);
+  const order = cellOrder(columns);
+  const planPanes = state.plan?.panes || [];
+  const byCol = columns.map(() => []);
+  order.forEach((cell, i) => byCol[cell.c].push(i));
+  $("grid").innerHTML = byCol.map((ids) => `<div class="col">${ids.map((i) => {
+    const p = state.panes[i] || {};
+    const planned = planPanes[i];
+    const model = p.model || state.model;
+    const meta = planned?.worktree ? `<span class="br">${esc(planned.worktree.branch)}</span>` : esc(tilde(planned?.cwd || p.dir || state.cwd));
+    return `<button type="button" class="pane ${i === state.selected ? "sel" : ""}" data-pane="${i}" aria-pressed="${i === state.selected}">
+      <span class="ph"><span class="n">▦ ${i + 1}</span><span class="nm">${esc(p.name || `pane-${i + 1}`)}</span>${model ? `<span class="tag">${esc(model)}</span>` : ""}</span>
+      <span class="pr ${p.prompt ? "" : "empty"}">${esc(p.prompt || "empty session")}</span>
+      <span class="meta">${meta}</span></button>`;
+  }).join("")}</div>`).join("");
+  const even = columns.every((h) => h === columns[0]);
+  $("gridTitle").textContent = even ? `${columns.length}x${columns[0]} grid` : `${total()} panes`;
+}
+
+function renderEditor() {
+  const i = state.selected, p = state.panes[i] || {};
+  $("paneNum").textContent = i + 1;
+  $("paneHeading").textContent = p.name ? p.name : `Pane ${i + 1}`;
+  $("paneName").value = p.name || "";
+  $("paneName").placeholder = `pane-${i + 1}`;
+  $("panePrompt").value = p.prompt || "";
+  $("paneModel").value = MODELS.includes(p.model) ? p.model : "";
+  $("paneDir").value = p.dir || "";
+  $("paneArgs").value = p.args || "";
+}
+
+function renderStatus() {
+  const el = $("status");
+  if (state.planError) {
+    el.className = "status error";
+    $("statusText").textContent = state.planError.message + (state.planError.hint ? ` · ${state.planError.hint}` : "");
+  } else if (state.plan) {
+    el.className = "status";
+    $("statusText").textContent = `Opens ${state.plan.panes.length} panes in ${state.backendLabel} as “${state.plan.name}”` + (state.plan.panes.some((p) => p.worktree) ? " · each on its own branch" : "");
+  }
+  $("launchBtn").disabled = state.busy || Boolean(state.planError);
+  $("previewLaunch").disabled = state.busy || Boolean(state.planError);
+}
+
+function renderProject() {
+  const info = state.info;
+  // The box is right-to-left so long paths cut off at the start. The marks keep the path itself left-to-right.
+  $("projectPath").textContent = "\u200E" + tilde(state.cwd) + "\u200E";
+  const badge = $("projectBadge");
+  badge.hidden = false;
+  if (info.configError) { badge.className = "badge warn"; badge.textContent = "config error"; }
+  else if (info.projectConfig) { badge.className = "badge"; badge.textContent = ".claudegrid.json"; }
+  else if (info.gitRoot) { badge.className = "badge muted"; badge.textContent = "git"; }
+  else badge.hidden = true;
+  $("ver").textContent = `v${info.version}`;
+  $("preset").innerHTML = `<option value="">Project defaults</option>` + info.presets.map((p) => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join("");
+  const terms = info.doctor.terminals;
+  $("backend").innerHTML = `<option value="auto">Automatic${info.doctor.auto.backend ? ` (${info.doctor.auto.backend})` : ""}</option>` +
+    terms.map((t) => `<option value="${t.name}" ${t.status === "ok" ? "" : "disabled"}>${t.name}${t.status === "ok" ? "" : ` · ${esc(t.detail)}`}</option>`).join("");
+  document.title = `claudegrid · ${tilde(state.cwd)}`;
+}
+
+function renderAll() { renderSettings(); renderGrid(); renderEditor(); renderStatus(); }
+
+/* ---------- plan (live validation) ---------- */
+let planTimer, planSeq = 0;
+function schedulePlan() { clearTimeout(planTimer); planTimer = setTimeout(refreshPlan, 220); }
+async function refreshPlan() {
+  const seq = ++planSeq;
+  try {
+    const res = await api("POST", "/api/plan", { cwd: state.cwd, preset: state.preset, grid: gridFromState() });
+    if (seq !== planSeq) return;
+    state.plan = res.plan; state.backendLabel = res.backendLabel; state.steps = res.steps; state.planError = null;
+  } catch (e) {
+    if (seq !== planSeq) return;
+    state.plan = null; state.planError = e;
+  }
+  renderGrid(); renderStatus();
+}
+function changed() { renderAll(); schedulePlan(); }
+
+/* ---------- loading ---------- */
+async function loadProject(cwd, preset = "") {
+  try {
+    state.info = await api("GET", "/api/state" + q({ cwd }));
+    state.cwd = state.info.cwd;
+    state.preset = preset;
+    renderProject();
+    if (state.info.configError) {
+      loadGrid({});
+      toast("bad", state.info.configError.error, state.info.configError.hint);
+    } else {
+      const { grid } = await api("GET", "/api/resolve" + q({ cwd: state.cwd, preset }));
+      loadGrid(grid);
+    }
+    changed();
+  } catch (e) { toast("bad", e.message, e.hint); }
+}
+
+/* ---------- launch, preview, save ---------- */
+async function launch() {
+  if (state.busy) return;
+  state.busy = true; renderStatus();
+  $("launchBtn").textContent = "Launching…";
+  try {
+    const res = await api("POST", "/api/launch", { cwd: state.cwd, preset: state.preset, grid: gridFromState() });
+    toast("ok", `✔ ${res.message || "Launched"}`, res.notes.join("\n"));
+    $("previewDialog").close();
+  } catch (e) { toast("bad", e.message, e.hint); }
+  state.busy = false; $("launchBtn").textContent = "Launch"; renderStatus();
+}
+
+function openPreview() {
+  if (!state.plan) { toast("bad", state.planError?.message || "Nothing to preview yet", state.planError?.hint); return; }
+  const p = state.plan;
+  $("previewPlan").innerHTML = `<span style="color:#ff8a5c">▦ claudegrid</span> ${esc(p.name)} <span class="c">· ${esc(p.layout)} · ${esc(state.backendLabel)}</span>\n` +
+    p.panes.map((x) => `  <span class="c">${String(x.index).padStart(2)}</span> ${esc(x.name)}  ${esc(tilde(x.cwd))}${x.worktree ? ` <span style="color:#7cc4d6">(${esc(x.worktree.branch)})</span>` : ""}\n     <span class="c">${esc(joinArgs(x.command))}</span>`).join("\n");
+  $("previewSteps").textContent = (state.steps || []).join("\n");
+  $("previewDialog").showModal();
+}
+
+let saveMode = "grid";
+function openSave() {
+  const where = state.info.projectConfig || `${state.info.gitRoot || state.cwd}/.claudegrid.json`;
+  $("saveWhere").textContent = `Writes to ${tilde(where)}. ` + (saveMode === "grid" ? "These become the defaults for plain `claudegrid` in this project." : "Start it later with `claudegrid <name>` or pick it here.");
+  $("presetFields").hidden = saveMode !== "preset";
+  document.querySelectorAll("#saveDialog .seg button").forEach((b) => { const on = b.dataset.mode === saveMode; b.classList.toggle("on", on); b.setAttribute("aria-checked", on); });
+  if (!$("saveDialog").open) { $("saveName").value = state.preset || ""; $("saveDialog").showModal(); }
+}
+async function save() {
+  try {
+    const res = await api("POST", "/api/config", { cwd: state.cwd, mode: saveMode, name: $("saveName").value, description: $("saveDesc").value, grid: gridFromState() });
+    $("saveDialog").close();
+    toast("ok", "✔ Saved", tilde(res.path));
+    const keep = saveMode === "preset" ? $("saveName").value.trim() : state.preset;
+    state.info = await api("GET", "/api/state" + q({ cwd: state.cwd }));
+    renderProject();
+    state.preset = keep; renderSettings(); schedulePlan();
+  } catch (e) { toast("bad", e.message, e.hint); }
+}
+
+/* ---------- folder picker ---------- */
+let dirTarget = "project", dirPath = "";
+async function openDirs(target, start) {
+  dirTarget = target;
+  $("dirTitle").textContent = target === "project" ? "Choose a project folder" : `Folder for pane ${state.selected + 1}`;
+  $("recentWrap").hidden = target !== "project" || !state.info?.recent.length;
+  $("recent").innerHTML = (state.info?.recent || []).map((r) => `<button type="button" data-path="${esc(r)}" title="${esc(r)}">${esc(tilde(r))}</button>`).join("");
+  if (!$("dirDialog").open) $("dirDialog").showModal();
+  await showDir(start);
+}
+async function showDir(path) {
+  try {
+    const res = await api("GET", "/api/dirs" + q({ path, hidden: $("dirHidden").checked ? "1" : "0" }));
+    dirPath = res.path;
+    $("dirInput").value = tilde(res.path);
+    const parts = res.path.split("/").filter(Boolean);
+    $("crumbs").innerHTML = `<button type="button" data-path="/">/</button>` + parts.map((p, i) => `<button type="button" data-path="/${esc(parts.slice(0, i + 1).join("/"))}">${esc(p)}</button>`).join("<span>/</span>");
+    $("dirs").innerHTML = (res.parent ? `<button type="button" data-path="${esc(res.parent)}"><span>↰</span><span class="fname">..</span></button>` : "") +
+      (res.dirs.length ? res.dirs.map((d) => `<button type="button" data-path="${esc(d.path)}"><span>📁</span><span class="fname">${esc(d.name)}</span>${d.config ? `<span class="badge">.claudegrid.json</span>` : ""}${d.git ? `<span class="badge muted">git</span>` : ""}</button>`).join("") : `<div class="empty-state">No folders here</div>`);
+  } catch (e) { toast("bad", e.message, e.hint); }
+}
+function useDir() {
+  $("dirDialog").close();
+  if (dirTarget === "project") { loadProject(dirPath); return; }
+  const base = state.cwd;
+  const rel = dirPath === base || dirPath.startsWith(base + "/") ? dirPath.slice(base.length + 1) : dirPath;
+  state.panes[state.selected].dir = rel ? tilde(rel) : "";
+  changed();
+}
+
+/* ---------- worktrees ---------- */
+async function loadWorktrees() {
+  const list = $("wtList");
+  try {
+    const res = await api("GET", "/api/worktrees" + q({ cwd: state.cwd }));
+    $("wtClean").disabled = !res.worktrees.length;
+    if (!res.git) { list.innerHTML = `<div class="empty-state">${esc(tilde(state.cwd))} is not a git repository.</div>`; return; }
+    if (!res.worktrees.length) { list.innerHTML = `<div class="empty-state">No claudegrid worktrees yet. Turn on “Git worktrees” and launch a grid.</div>`; return; }
+    list.innerHTML = res.worktrees.map((w) => `<label class="item"><input type="checkbox" data-branch="${esc(w.branch)}" checked>
+      <span><span class="t">${esc(w.branch)}</span><br><span class="s mono">${esc(tilde(w.path))}</span></span>
+      <span style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">${w.dirty ? `<span class="badge warn">${w.dirty} changed</span>` : `<span class="badge ok">clean</span>`}${w.ahead ? `<span class="badge">${w.ahead} ahead</span>` : ""}</span></label>`).join("");
+  } catch (e) { list.innerHTML = `<div class="empty-state">${esc(e.message)}</div>`; }
+}
+async function cleanWorktrees() {
+  const branches = [...document.querySelectorAll("#wtList input:checked")].map((i) => i.dataset.branch);
+  if (!branches.length) { toast("bad", "Select at least one worktree"); return; }
+  const btn = $("wtClean");
+  if (btn.dataset.confirm !== "1") { btn.dataset.confirm = "1"; btn.textContent = `Remove ${branches.length}?`; setTimeout(() => { btn.dataset.confirm = ""; btn.textContent = "Clean selected"; }, 4000); return; }
+  btn.dataset.confirm = ""; btn.textContent = "Clean selected";
+  try {
+    const { results } = await api("POST", "/api/worktrees/clean", { cwd: state.cwd, branches, force: $("wtForce").checked, keepBranches: $("wtKeep").checked });
+    const removed = results.filter((r) => r.action === "removed").length;
+    const skipped = results.filter((r) => r.action === "skipped");
+    toast(skipped.length ? "bad" : "ok", `${removed} removed${skipped.length ? `, ${skipped.length} skipped` : ""}`, results.map((r) => r.note ? `${r.branch}: ${r.note}` : "").filter(Boolean).join("\n"));
+  } catch (e) { toast("bad", e.message, e.hint); }
+  loadWorktrees();
+}
+
+/* ---------- health ---------- */
+function renderHealth(d) {
+  const mark = { ok: "✔", warn: "!", fail: "✖", info: "•" };
+  const section = (title, checks, extra = "") => `<div class="card"><div class="card-head"><h2>${title}</h2>${extra}</div><div class="list">${checks.map((c) =>
+    `<div class="item"><span class="mark ${c.status}">${mark[c.status]}</span><span><span class="t">${esc(c.name)}</span>${c.current ? ` <span class="badge">running in it</span>` : ""}<br><span class="s">${esc(c.detail)}</span></span><span></span></div>`).join("")}</div></div>`;
+  const auto = d.auto.backend ? `<span class="spacer"></span><span class="badge ok">automatic picks ${esc(d.auto.backend)}</span>` : `<span class="spacer"></span><span class="badge warn">${esc(d.auto.error)}</span>`;
+  $("health").innerHTML = `<div style="display:grid;gap:16px">${section("Requirements", d.requirements)}${section("Terminals", d.terminals, auto)}${section("Config", d.config)}</div>`;
+}
+async function loadHealth(fresh) {
+  try { renderHealth(fresh ? await api("POST", "/api/doctor", { cwd: state.cwd }) : state.info.doctor); } catch (e) { toast("bad", e.message, e.hint); }
+}
+
+/* ---------- events ---------- */
+document.querySelectorAll(".tabs button").forEach((tab) => tab.addEventListener("click", () => {
+  document.querySelectorAll(".tabs button").forEach((t) => t.setAttribute("aria-selected", t === tab));
+  for (const v of ["launch", "worktrees", "health"]) $(`view-${v}`).hidden = v !== tab.dataset.view;
+  $("view-launch").hidden ? document.querySelector(".foot").setAttribute("hidden", "") : document.querySelector(".foot").removeAttribute("hidden");
+  if (tab.dataset.view === "worktrees") loadWorktrees();
+  if (tab.dataset.view === "health") loadHealth(false);
+}));
+
+$("preset").addEventListener("change", (e) => loadProject(state.cwd, e.target.value));
+$("layoutChips").addEventListener("click", (e) => { const l = e.target.dataset.layout; if (!l) return; state.layout = l; setPanesLength(total()); changed(); });
+document.querySelectorAll("[data-step]").forEach((b) => b.addEventListener("click", () => {
+  const cols = columnsFor(state.layout);
+  let c = cols.length, r = Math.max(...cols);
+  if (b.dataset.step === "cols") c += Number(b.dataset.d); else r += Number(b.dataset.d);
+  c = Math.max(1, Math.min(6, c)); r = Math.max(1, Math.min(6, r));
+  while (c * r > 16) b.dataset.step === "cols" ? c-- : r--;
+  state.layout = `${c}x${r}`; setPanesLength(total()); changed();
+}));
+$("model").addEventListener("change", (e) => { if (e.target.value === "__custom") { $("modelCustom").hidden = false; $("modelCustom").focus(); return; } state.model = e.target.value; changed(); });
+$("modelCustom").addEventListener("input", (e) => { state.model = e.target.value.trim(); schedulePlan(); renderGrid(); });
+$("backend").addEventListener("change", (e) => { state.backend = e.target.value; changed(); });
+$("worktrees").addEventListener("change", (e) => { state.worktrees = e.target.checked; changed(); });
+$("keepShell").addEventListener("change", (e) => { state.keepShell = e.target.checked; changed(); });
+$("args").addEventListener("input", (e) => { state.args = e.target.value; schedulePlan(); });
+$("command").addEventListener("input", (e) => { state.command = e.target.value; schedulePlan(); });
+
+$("grid").addEventListener("click", (e) => { const b = e.target.closest("[data-pane]"); if (!b) return; state.selected = Number(b.dataset.pane); renderGrid(); renderEditor(); $("panePrompt").focus(); });
+const paneField = (id, key, rerenderEditor = false) => $(id).addEventListener("input", (e) => { state.panes[state.selected][key] = e.target.value; renderGrid(); if (rerenderEditor) $("paneHeading").textContent = e.target.value || `Pane ${state.selected + 1}`; schedulePlan(); });
+paneField("paneName", "name", true); paneField("panePrompt", "prompt"); paneField("paneDir", "dir"); paneField("paneArgs", "args");
+$("paneModel").addEventListener("change", (e) => { state.panes[state.selected].model = e.target.value; changed(); });
+$("paneClear").addEventListener("click", () => { state.panes[state.selected] = {}; changed(); });
+$("paneCopy").addEventListener("click", () => { const p = state.panes[state.selected].prompt || ""; state.panes.forEach((x) => (x.prompt = p)); changed(); toast("ok", "Copied the prompt to every pane"); });
+$("paneDirBtn").addEventListener("click", () => { const d = state.panes[state.selected].dir; openDirs("pane", d ? (d.startsWith("/") || d.startsWith("~") ? d : `${state.cwd}/${d}`) : state.cwd); });
+
+$("projectBtn").addEventListener("click", () => openDirs("project", state.cwd));
+$("dirs").addEventListener("click", (e) => { const b = e.target.closest("[data-path]"); if (b) showDir(b.dataset.path); });
+$("dirs").addEventListener("dblclick", (e) => { const b = e.target.closest("[data-path]"); if (b) { dirPath = b.dataset.path; useDir(); } });
+$("crumbs").addEventListener("click", (e) => { const b = e.target.closest("[data-path]"); if (b) showDir(b.dataset.path); });
+$("recent").addEventListener("click", (e) => { const b = e.target.closest("[data-path]"); if (b) { dirPath = b.dataset.path; useDir(); } });
+$("dirGo").addEventListener("click", () => showDir($("dirInput").value));
+$("dirInput").addEventListener("keydown", (e) => { if (e.key === "Enter") showDir($("dirInput").value); });
+$("dirHidden").addEventListener("change", () => showDir(dirPath));
+$("dirUse").addEventListener("click", useDir);
+
+$("launchBtn").addEventListener("click", launch);
+$("previewBtn").addEventListener("click", openPreview);
+$("previewLaunch").addEventListener("click", launch);
+$("saveBtn").addEventListener("click", () => { saveMode = state.preset ? "preset" : "grid"; openSave(); });
+document.querySelectorAll("#saveDialog .seg button").forEach((b) => b.addEventListener("click", () => { saveMode = b.dataset.mode; openSave(); }));
+$("saveGo").addEventListener("click", save);
+$("wtRefresh").addEventListener("click", loadWorktrees);
+$("wtClean").addEventListener("click", cleanWorktrees);
+$("healthRefresh").addEventListener("click", () => loadHealth(true));
+document.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", () => b.closest("dialog").close()));
+document.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && !$("launchBtn").disabled) { e.preventDefault(); launch(); } });
+
+/* The server stops a while after the window closes. */
+const ping = () => api("POST", "/api/ping").catch(() => { $("status").className = "status error"; $("statusText").textContent = "Lost the connection to claudegrid. Run `claudegrid ui` again."; });
+ping(); setInterval(ping, 10000);
+
+loadProject(BOOT.cwd);
+</script>
+</body>
+</html>

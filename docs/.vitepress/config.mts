@@ -49,6 +49,7 @@ export default defineConfig({
     logo: "/logo.svg",
     nav: [
       { text: "Guide", link: "/guide/getting-started" },
+      { text: "App", link: "/guide/app" },
       { text: "Config", link: "/guide/configuration" },
       { text: "CLI", link: "/guide/cli" },
       { text: "GitHub", link: "https://github.com/halitsever/claudegrid" },
@@ -59,6 +60,7 @@ export default defineConfig({
         items: [
           { text: "Getting started", link: "/guide/getting-started" },
           { text: "Usage", link: "/guide/usage" },
+          { text: "Desktop app", link: "/guide/app" },
         ],
       },
       {

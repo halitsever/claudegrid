@@ -1,6 +1,6 @@
 {
   "name": "claudegrid",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Run several Claude Code agents side by side in one terminal window: Konsole, tmux, kitty and WezTerm grids with per-pane prompts, presets and git worktrees.",
   "keywords": [
     "claude",
@@ -32,7 +32,9 @@
   },
   "files": [
     "dist",
-    "docs/public/schema.json"
+    "assets",
+    "docs/public/schema.json",
+    "docs/public/logo.svg"
   ],
   "engines": {
     "node": ">=20"
