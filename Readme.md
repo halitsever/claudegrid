@@ -10,7 +10,7 @@ Open a Konsole window split 2x2 with Claude Code running in every pane.<br>
 <img src="https://img.shields.io/github/sponsors/halitsever"/>
 </p>
 <p align="center">
-<a align="center" href="#usage">Documentation</a>
+<a align="center" href="https://halitsever.github.io/claudegrid/">Documentation</a>
   </p>
 </p>
 
