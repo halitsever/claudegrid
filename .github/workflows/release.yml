@@ -51,6 +51,9 @@ jobs:
       # repo variable NPM_TRUSTED_PUBLISHING=true after adding the workflow as a trusted publisher on npmjs.com.
       - name: npm publish with trusted publishing
         if: env.NPM_TOKEN == '' && vars.NPM_TRUSTED_PUBLISHING == 'true'
+        env:
+          # setup-node writes a placeholder token, which would be tried instead of the OIDC login.
+          NODE_AUTH_TOKEN: ""
         run: |
           npm install -g npm@11
           npm publish claudegrid.tgz --access public
