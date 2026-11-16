@@ -21,6 +21,10 @@ test("unknown flags point at the -- separator", () => {
   assert.match(cli(["--layuot", "2x2"]).stderr, /did you mean "--layout"/);
 });
 
+test("--new-tab and --no-new-tab cannot be combined", () => {
+  assert.match(cli(["--new-tab", "--no-new-tab"]).stderr, /cancel each other out/);
+});
+
 test("misspelled commands get a suggestion", () => {
   const result = cli(["doctr"], { cwd: sandbox() });
   assert.equal(result.code, 1);

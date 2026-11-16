@@ -30,6 +30,8 @@ const LAUNCH_OPTIONS = {
   command: { type: "string" },
   "keep-shell": { type: "boolean" },
   "no-keep-shell": { type: "boolean" },
+  "new-tab": { type: "boolean" },
+  "no-new-tab": { type: "boolean" },
   "dry-run": { type: "boolean" },
   json: { type: "boolean" },
   detach: { type: "boolean", short: "d" },
@@ -59,6 +61,7 @@ ${b("options")}
   -t, --name <name>       name for the window, tmux session and worktree group
       --command <cmd>     run another program instead of claude
       --no-keep-shell     close the pane when claude exits
+      --no-new-tab        open a new window instead of a tab in this terminal
   -d, --detach            start the tmux session without attaching
       --dry-run           print the plan and commands, open nothing
       --json              print the plan as JSON
@@ -106,8 +109,8 @@ async function main(argv: string[]): Promise<number> {
 
   switch (first) {
     case "pane": {
-      const { values } = parse(rest, { spec: { type: "string" }, index: { type: "string" } });
-      return runPane({ spec: values.spec, index: values.index === undefined ? undefined : Number(values.index) });
+      const { values } = parse(rest, { spec: { type: "string" }, index: { type: "string" }, "konsole-tab": { type: "boolean" } });
+      return runPane({ spec: values.spec, index: values.index === undefined ? undefined : Number(values.index), konsoleTab: values["konsole-tab"] });
     }
     case "init": {
       const { values } = parse(rest, { force: { type: "boolean" }, cwd: { type: "string", short: "C" } });
@@ -202,6 +205,7 @@ async function main(argv: string[]): Promise<number> {
   }
   if (values.layout && values.panes) throw new CliError("use either --layout or --panes, not both");
   if (values.worktrees && values["no-worktrees"]) throw new CliError("--worktrees and --no-worktrees cancel each other out");
+  if (values["new-tab"] && values["no-new-tab"]) throw new CliError("--new-tab and --no-new-tab cancel each other out");
 
   await launch({
     cwd,
@@ -213,6 +217,7 @@ async function main(argv: string[]): Promise<number> {
     model: values.model,
     command: values.command,
     keepShell: values["keep-shell"] ? true : values["no-keep-shell"] ? false : undefined,
+    newTab: values["new-tab"] ? true : values["no-new-tab"] ? false : undefined,
     name: values.name,
     prompts: values.prompt ?? [],
     extraArgs: passthrough,

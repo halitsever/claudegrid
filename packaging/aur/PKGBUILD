@@ -32,6 +32,8 @@ package() {
   node "$cli" completion fish > "$pkgdir/usr/share/fish/vendor_completions.d/claudegrid.fish"
   install -Dm644 "$pkgdir/usr/lib/node_modules/claudegrid/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
   install -Dm644 "$pkgdir/usr/lib/node_modules/claudegrid/docs/public/logo.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/claudegrid.svg"
+  # Konsole reads profiles only at startup, so shipping this one lets claudegrid open tabs right away.
+  printf '[General]\nName=claudegrid\nCommand=/usr/bin/claudegrid pane --konsole-tab\nLocalTabTitleFormat=▦ claudegrid\nRemoteTabTitleFormat=▦ claudegrid\n' | install -Dm644 /dev/stdin "$pkgdir/usr/share/konsole/claudegrid.profile"
   install -Dm644 /dev/stdin "$pkgdir/usr/share/applications/claudegrid.desktop" <<DESKTOP
 [Desktop Entry]
 Type=Application

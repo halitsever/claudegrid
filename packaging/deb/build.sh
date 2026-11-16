@@ -36,6 +36,10 @@ Keywords=claude;ai;agent;terminal;tmux;konsole;grid;
 StartupWMClass=claudegrid
 DESKTOP
 
+# Konsole reads profiles only at startup, so shipping this one lets claudegrid open tabs right away.
+install -d "$root/usr/share/konsole"
+printf '[General]\nName=claudegrid\nCommand=/usr/bin/claudegrid pane --konsole-tab\nLocalTabTitleFormat=▦ claudegrid\nRemoteTabTitleFormat=▦ claudegrid\n' > "$root/usr/share/konsole/claudegrid.profile"
+
 install -d "$root/usr/share/doc/claudegrid"
 cat > "$root/usr/share/doc/claudegrid/copyright" <<COPYRIGHT
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/

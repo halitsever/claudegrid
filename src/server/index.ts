@@ -81,7 +81,7 @@ function relativize(grid: GridConfig, base: string): GridConfig {
   return out;
 }
 
-const GRID_KEYS: (keyof GridConfig)[] = ["layout", "panes", "backend", "worktrees", "model", "args", "command", "keepShell", "dir"];
+const GRID_KEYS: (keyof GridConfig)[] = ["layout", "panes", "backend", "worktrees", "model", "args", "command", "keepShell", "newTab", "dir"];
 
 function cleanGrid(input: unknown): GridConfig {
   if (typeof input !== "object" || input === null) throw new HttpError(400, "missing grid settings");
@@ -167,7 +167,7 @@ export async function startUiServer(options: UiServerOptions): Promise<UiServer>
       const cwd = directory(body.cwd);
       const preset = typeof body.preset === "string" && body.preset ? body.preset : undefined;
       const plan = planFromOptions({ cwd, preset, grid: cleanGrid(body.grid), prompts: [], extraArgs: [], dryRun: false, json: false, detach: true });
-      const result = await executeLaunch(plan, pickBackend(plan.backend), { detach: true, interactive: false });
+      const result = await executeLaunch(plan, pickBackend(plan.backend), { detach: true, interactive: false, newTab: false });
       addRecent(cwd);
       return result;
     },

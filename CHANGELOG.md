@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Run from inside Konsole, WezTerm or tmux, the grid now opens as a new tab in that terminal. `--no-new-tab` or `"newTab": false` opens a separate window as before
+- A `claudegrid` Konsole profile, added on the first run and shipped in the `.deb` and AUR packages, so Konsole tabs can run panes
+
 ## [1.1.0] - 2026-11-16
 
 ### Added

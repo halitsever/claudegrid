@@ -52,6 +52,17 @@ claudegrid -w -n 3
 
 `-w` gives every pane its own [git worktree](./worktrees) and branch, so agents don't overwrite each other's files.
 
+## New tab or new window
+
+When you run claudegrid inside Konsole, WezTerm or tmux, the grid opens as a **new tab** in that terminal. Pass `--no-new-tab`, or set `"newTab": false` in your config, to get a separate window instead:
+
+```sh
+claudegrid                 # new tab in this terminal
+claudegrid --no-new-tab    # separate window
+```
+
+In Konsole, tabs use a `claudegrid` profile that claudegrid adds on its first run. Konsole only reads profiles when it starts, so the very first time claudegrid opens a window and tells you to restart Konsole. After that every grid is a tab. kitty always opens a new window. See [Terminals](./terminals) for details.
+
 ## Choosing a terminal
 
 claudegrid uses the terminal you are already in. Force one with `-b`:

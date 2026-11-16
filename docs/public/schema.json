@@ -95,6 +95,11 @@
       "additionalProperties": {
         "$ref": "#/$defs/preset"
       }
+    },
+    "newTab": {
+      "type": "boolean",
+      "default": true,
+      "description": "Open the grid as a new tab in the terminal you run claudegrid from (Konsole, WezTerm, tmux). false opens a new window."
     }
   },
   "$defs": {
@@ -225,6 +230,11 @@
           "type": "string",
           "minLength": 1,
           "description": "Shown by `claudegrid presets`."
+        },
+        "newTab": {
+          "type": "boolean",
+          "default": true,
+          "description": "Open the grid as a new tab in the terminal you run claudegrid from (Konsole, WezTerm, tmux). false opens a new window."
         }
       }
     }
