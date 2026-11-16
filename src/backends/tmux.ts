@@ -66,10 +66,12 @@ export const tmux: Backend = {
       }
     });
 
-    for (const pane of plan.panes) tmuxRun("set-option", "-p", "-t", paneId.get(pane.index)!, "@claudegrid_name", pane.title);
-    tmuxRun("set-option", "-w", "-t", created, "pane-border-status", "top");
-    tmuxRun("set-option", "-w", "-t", created, "pane-border-format", " #{?pane_active,#[bold],}#{@claudegrid_name}#[default] ");
-    tmuxRun("select-pane", "-t", created);
+    // Titles and focus are cosmetic. A pane whose program already exited must not fail the launch.
+    const decorate = ctx.dryRun ? tmuxRun : (...args: string[]) => run("tmux", args).stdout;
+    for (const pane of plan.panes) decorate("set-option", "-p", "-t", paneId.get(pane.index)!, "@claudegrid_name", pane.title);
+    decorate("set-option", "-w", "-t", created, "pane-border-status", "top");
+    decorate("set-option", "-w", "-t", created, "pane-border-format", " #{?pane_active,#[bold],}#{@claudegrid_name}#[default] ");
+    decorate("select-pane", "-t", created);
 
     if (ctx.dryRun) return "";
     if (asWindow) return "opened a new tmux window";
