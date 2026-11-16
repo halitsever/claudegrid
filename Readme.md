@@ -1,5 +1,5 @@
 <p align="center" class="logo-section">
-<img src="https://i.ibb.co/NrPh9xP/image.png" height="80" width="80"/>
+<img src="docs/public/logo.svg" height="96" width="96" alt="claudegrid logo"/>
 <br/>
 <img src="https://halitsever-api.vercel.app/api/repo-title?title=claudegrid">
 

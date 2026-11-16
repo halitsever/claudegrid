@@ -17,11 +17,16 @@ export default defineConfig({
   head: [
     ["meta", { name: "keywords", content: "claude code, claude, anthropic, ai coding agent, multi agent, konsole, kde, split terminal, tiling terminal, linux cli" }],
     ["meta", { name: "author", content: "Halit Sever" }],
-    ["meta", { name: "theme-color", content: "#d97757" }],
+    ["link", { rel: "icon", type: "image/svg+xml", href: base + "logo.svg" }],
+    ["link", { rel: "apple-touch-icon", href: base + "logo-180.png" }],
+    ["meta", { name: "theme-color", content: "#e8573c" }],
     ["meta", { property: "og:type", content: "website" }],
     ["meta", { property: "og:site_name", content: "claudegrid" }],
-    ["meta", { property: "og:image", content: "https://i.ibb.co/NrPh9xP/image.png" }],
-    ["meta", { name: "twitter:card", content: "summary" }],
+    ["meta", { property: "og:image", content: siteUrl + "og.png" }],
+    ["meta", { property: "og:image:width", content: "1200" }],
+    ["meta", { property: "og:image:height", content: "630" }],
+    ["meta", { name: "twitter:image", content: siteUrl + "og.png" }],
+    ["meta", { name: "twitter:card", content: "summary_large_image" }],
   ],
   /** Per-page canonical and Open Graph tags, so search engines and link previews get the right URL. */
   transformPageData(pageData) {
@@ -38,7 +43,7 @@ export default defineConfig({
     );
   },
   themeConfig: {
-    logo: "https://i.ibb.co/NrPh9xP/image.png",
+    logo: "/logo.svg",
     nav: [
       { text: "Guide", link: "/guide/getting-started" },
       { text: "GitHub", link: "https://github.com/halitsever/claudegrid" },
