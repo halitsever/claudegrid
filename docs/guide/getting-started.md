@@ -1,42 +1,101 @@
 ---
 title: Getting started
-description: Install claudegrid on Linux with KDE Konsole and start four Claude Code sessions in a 2x2 split terminal.
+description: Install claudegrid with npm or a one line script, check your setup with claudegrid doctor and open your first grid of Claude Code sessions.
 ---
 
 # Getting started
 
-claudegrid is a small Bash script that opens a new KDE Konsole window, splits it into four panes and starts [Claude Code](https://claude.com/claude-code) in each one.
+claudegrid opens several [Claude Code](https://claude.com/claude-code) sessions in one terminal window, laid out as a grid. Each pane can work on its own task, with its own model and, if you want, on its own git branch.
+
+<img src="/demo.svg" alt="four Claude Code panes opened by claudegrid" width="960" height="560" />
 
 ## Requirements
 
-- Linux with **KDE Konsole**
-- **qdbus6** (ships with Qt 6 tools, e.g. `qt6-tools` or `qdbus-qt6`)
-- **Claude Code**, with the `claude` command on your `PATH`
+- **Node.js 20** or newer
+- **Claude Code**, with `claude` on your `PATH`
+- One of these terminals:
+  - **KDE Konsole** with `qdbus6`
+  - **tmux** 3.1 or newer, which works inside any terminal and over SSH
+  - **kitty**
+  - **WezTerm**
 
 ## Install
 
-```sh
+::: code-group
+
+```sh [npm]
+npm install -g claudegrid
+```
+
+```sh [script]
+curl -fsSL https://raw.githubusercontent.com/halitsever/claudegrid/main/install.sh | bash
+```
+
+```sh [from source]
 git clone https://github.com/halitsever/claudegrid.git
 cd claudegrid
 ./install.sh
 ```
 
-The installer:
+:::
 
-1. checks that `konsole`, `qdbus6` and `claude` are available
-2. copies `claudegrid` to `~/.local/bin` (set `BIN_DIR` to change it)
-3. creates a `claudegrid` profile in `~/.local/share/konsole`
+The install script uses npm under the hood. When your global npm folder needs root, it installs into `~/.local` instead. It also removes the first, bash-only version of claudegrid if it finds one.
 
-If `~/.local/bin` is not on your `PATH`, the installer tells you. Add this to your shell config:
+## Check your setup
 
 ```sh
-export PATH="$HOME/.local/bin:$PATH"
+claudegrid doctor
 ```
+
+```txt
+▦ claudegrid doctor
+
+requirements
+  ✔ node             v22.22.1
+  ✔ claude           2.1.325 (Claude Code)
+  ✔ git              git version 2.53.0
+
+terminals
+  ✔ konsole          konsole + qdbus6 (you are in it)
+  ✔ tmux             tmux 3.6
+  • kitty            kitty is not installed
+  • wezterm          wezterm is not installed
+  → auto picks       konsole
+```
+
+## Your first grid
+
+```sh
+cd ~/my-project
+claudegrid
+```
+
+This opens four panes running `claude` in `~/my-project`. To see what would happen without opening anything, add `--dry-run`.
+
+## Shell completion
+
+::: code-group
+
+```sh [bash]
+claudegrid completion bash > ~/.local/share/bash-completion/completions/claudegrid
+```
+
+```sh [zsh]
+claudegrid completion zsh > "${fpath[1]}/_claudegrid"
+```
+
+```sh [fish]
+claudegrid completion fish > ~/.config/fish/completions/claudegrid.fish
+```
+
+:::
+
+Completion also suggests the preset names from your config.
 
 ## Uninstall
 
 ```sh
-rm ~/.local/bin/claudegrid ~/.local/share/konsole/claudegrid.profile
+npm uninstall -g claudegrid
 ```
 
 Next: [Usage](./usage)

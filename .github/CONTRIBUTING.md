@@ -12,6 +12,25 @@ Search the existing issues first. If nobody has reported it yet, open a new issu
 
 Open an issue with the **Feature request** template. Start with the problem you're trying to solve, then describe the solution you have in mind. For bigger changes, please wait until the direction is agreed on in the issue before writing code.
 
+## Development
+
+You need Node.js 20 or newer. tmux makes the integration tests run, and they are skipped without it.
+
+```sh
+npm install
+npm test                                   # build, unit tests and tmux integration tests
+CLAUDEGRID_TEST_KONSOLE=1 npm test         # also start a real Konsole, offscreen
+node dist/cli.js --dry-run -l 3x2          # try your build without installing it
+npm run docs:dev                           # docs at http://localhost:5173/claudegrid/
+```
+
+The code lives in `src/`:
+
+- `cli.ts` parses arguments and dispatches to `commands/`
+- `config.ts` loads and validates config files, `plan.ts` turns them into a launch plan
+- `backends/` has one file per terminal. Each backend receives the plan and a `run` function, which records commands during a dry run
+- `pane.ts` is what runs inside every pane
+
 ## Pull requests
 
 1. Fork the repository and create a branch from `main`, for example `fix/empty-config`.
