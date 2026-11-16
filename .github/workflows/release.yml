@@ -13,7 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Without an NPM_TOKEN secret the release still goes to GitHub, only the npm publish is skipped.
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # setup-node fills NODE_AUTH_TOKEN with a placeholder, so the check reads the secret itself.
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -40,5 +41,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh release create "$GITHUB_REF_NAME" claudegrid.tgz --title "$GITHUB_REF_NAME" --notes-file notes.md
       - name: npm publish
-        if: env.NODE_AUTH_TOKEN != ''
+        if: env.NPM_TOKEN != ''
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish claudegrid.tgz --provenance --access public
