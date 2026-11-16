@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Opens a Konsole window split 2x2 with claude running in each pane.
+# Extra args are passed to each claude. Panes start through the "claudegrid" Konsole profile.
+set -euo pipefail
+
+if [ "${1:-}" = "--pane" ]; then
+  cd "${CLAUDEGRID_DIR:-$HOME}"
+  eval "claude ${CLAUDEGRID_ARGS:-}" || true
+  exec "${SHELL:-/bin/bash}"
+fi
+
+args=""
+for a in "$@"; do args+=" $(printf '%q' "$a")"; done
+export CLAUDEGRID_DIR="$PWD" CLAUDEGRID_ARGS="$args"
+
+konsole --separate --nofork --profile claudegrid --workdir "$PWD" >/dev/null 2>&1 &
+pid=$!
+disown
+
+svc="org.kde.konsole-$pid"
+
+# The DBus service needs a moment to register after launch.
+for _ in $(seq 50); do
+  qdbus6 "$svc" /Windows/1 >/dev/null 2>&1 && break
+  sleep 0.1
+done
+
+qdbus6 "$svc" /konsole/MainWindow_1 org.kde.KMainWindow.activateAction split-view-left-right >/dev/null
+qdbus6 "$svc" /Windows/1 org.kde.konsole.Window.createSplit 0 false >/dev/null
+qdbus6 "$svc" /Windows/1 org.kde.konsole.Window.createSplit 1 false >/dev/null
