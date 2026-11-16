@@ -8,7 +8,7 @@ hero:
   text: Four Claude Code sessions, one command
   tagline: Open a KDE Konsole window split 2x2 with claude running in every pane.
   image:
-    src: https://i.ibb.co/NrPh9xP/image.png
+    src: /logo.svg
     alt: claudegrid logo
   actions:
     - theme: brand
