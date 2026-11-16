@@ -1,16 +1,16 @@
 <p align="center" class="logo-section">
 <img src="https://i.ibb.co/NrPh9xP/image.png" height="80" width="80"/>
 <br/>
-<img src="https://halitsever-api.vercel.app/api/repo-title?title=repo_name">
+<img src="https://halitsever-api.vercel.app/api/repo-title?title=claudegrid">
 
 <p align="center">
-✋ Coming soon...<br>
+Open a Konsole window split 2x2 with Claude Code running in every pane.<br>
 <br/>
 <br/>
 <img src="https://img.shields.io/github/sponsors/halitsever"/>
 </p>
 <p align="center">
-<a align="center" href="#">Documentation</a>
+<a align="center" href="#usage">Documentation</a>
   </p>
 </p>
 
@@ -18,20 +18,39 @@
 <img src="https://halitsever-api.vercel.app/api/details"/>
 </p>
 
-- 🧑‍💻 [**TODO**](#) - update docs
+- 🪟 **One command, four sessions** - `claudegrid` opens a new Konsole window with four `claude` panes
+- 📁 **Same directory** - every pane starts in the directory you ran it from
+- 🎛️ **Shared flags** - extra arguments go to each `claude`, e.g. `claudegrid --model opus`
+- 🐚 **Shell stays open** - when `claude` exits, the pane drops into your shell
 
 <p align="center" >
 <img src="https://halitsever-api.vercel.app/api/installation"/>
 </p>
 
-Todo: update docs
+Requires KDE Konsole, `qdbus6` and [Claude Code](https://claude.com/claude-code).
+
+```sh
+git clone https://github.com/halitsever/claudegrid.git
+cd claudegrid
+./install.sh
+```
+
+The installer copies `claudegrid` to `~/.local/bin` (override with `BIN_DIR`) and creates a `claudegrid` Konsole profile.
+
+<h3 id="usage">Usage</h3>
+
+```sh
+cd ~/my-project
+claudegrid                    # four plain claude sessions
+claudegrid --continue         # every pane gets the same flags
+```
 
 <p align="center">
-<a href="https://github.com/halitsever/repo_name/issues"><img src="https://halitsever-api.vercel.app/api/issue"/></a>
+<a href="https://github.com/halitsever/claudegrid/issues"><img src="https://halitsever-api.vercel.app/api/issue"/></a>
 </p>
 
 <p align="center">
-Found a bug or have an idea? Open an <a href="https://github.com/halitsever/repo_name/issues">issue</a>.<br/>
+Found a bug or have an idea? Open an <a href="https://github.com/halitsever/claudegrid/issues">issue</a>.<br/>
 Read the <a href=".github/CONTRIBUTING.md">contributing guide</a> before sending a pull request.
 </p>
 
