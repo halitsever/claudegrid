@@ -101,7 +101,7 @@ test("launching from the ui starts a real tmux grid", { skip: !has("tmux") && "t
   delete process.env.TMUX;
   try {
     const out = join(sandbox(), "out");
-    const grid = { layout: "2x1", backend: "tmux", keepShell: false, command: "sh", args: ["-c", `echo "$CLAUDEGRID_PANE_NAME" >> ${out}`], panes: [{ name: "left" }, { name: "right" }] };
+    const grid = { layout: "2x1", backend: "tmux", keepShell: false, command: "sh", args: ["-c", `echo "$CLAUDEGRID_PANE_NAME" >> ${out}; sleep 1`], panes: [{ name: "left" }, { name: "right" }] };
     const res = await api("POST", "/api/launch", { cwd: sandbox(), grid });
     assert.equal(res.status, 200, JSON.stringify(res.body));
     assert.match(res.body.message, /started tmux session claudegrid-/);
