@@ -45,7 +45,7 @@ The `$schema` line gives you autocomplete and checks in VS Code, JetBrains IDEs 
 | `command` | string | `"claude"` | program each pane runs |
 | `keepShell` | boolean | `true` | open your shell when the program exits |
 | `newTab` | boolean | `true` | open the grid as a tab in the terminal you run claudegrid in |
-| `trust` | boolean | `false` | mark every pane folder as trusted in Claude Code, so it skips the trust question |
+| `trust` | boolean | `true` | mark every pane folder as trusted in Claude Code, so it skips the trust question |
 | `dir` | string | | base directory for every pane, relative to the config file |
 
 ## Pane options

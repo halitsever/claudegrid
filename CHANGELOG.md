@@ -7,7 +7,7 @@ All notable changes to this project are documented here. The format follows [Kee
 ### Added
 
 - A Terminal.app backend for macOS, `-b terminal`, that opens one tiled window per pane. `auto` falls back to it when no other terminal works, so claudegrid runs on a stock Mac
-- `--trust` and `"trust": true` mark every pane folder as trusted in Claude Code, so the panes skip its trust question
+- Pane folders are marked as trusted in Claude Code, so the panes skip its trust question. `--no-trust` or `"trust": false` brings the question back
 - A "Supported terminals" table in the Readme
 
 ### Fixed

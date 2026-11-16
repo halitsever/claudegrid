@@ -110,5 +110,5 @@ export function buildPlan(input: PlanInput): LaunchPlan {
     return { ...cell, name: label, title: pane.name ?? `claude ${cell.index + 1}`, cwd, argv, worktree };
   });
 
-  return { name, backend: config.backend ?? "auto", grid, panes, keepShell: config.keepShell ?? true, newTab: config.newTab ?? true, trust: config.trust ?? false, repoRoot };
+  return { name, backend: config.backend ?? "auto", grid, panes, keepShell: config.keepShell ?? true, newTab: config.newTab ?? true, trust: config.trust ?? true, repoRoot };
 }
