@@ -1,0 +1,18 @@
+{
+  "$schema": "https://halitsever.github.io/claudegrid/schema.json",
+  "panes": [
+    { "name": "cli" },
+    { "name": "tests", "prompt": "Run npm test and fix whatever fails. Explain each fix." },
+    { "name": "docs", "dir": "docs", "prompt": "Check that the pages in guide/ match the CLI in ../src and list anything out of date." },
+    { "name": "review", "prompt": "Review the uncommitted changes and point out bugs." }
+  ],
+  "presets": {
+    "release": {
+      "description": "Final checks before tagging a release",
+      "panes": [
+        { "name": "changelog", "prompt": "Compare CHANGELOG.md with git log since the last tag and list missing entries." },
+        { "name": "smoke", "prompt": "Run npm pack, install the tarball into a temp prefix and try --help, doctor and --dry-run." }
+      ]
+    }
+  }
+}
