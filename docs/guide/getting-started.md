@@ -26,7 +26,7 @@ claudegrid opens several [Claude Code](https://claude.com/claude-code) sessions 
 ::: code-group
 
 ```sh [npm]
-npm install -g claudegrid
+npm install -g @halitsever/claudegrid
 ```
 
 ```sh [Debian / Ubuntu]
@@ -56,7 +56,7 @@ Install Node.js and Claude Code, for example with [Homebrew](https://brew.sh), t
 
 ```sh
 brew install node tmux
-npm install -g @anthropic-ai/claude-code claudegrid
+npm install -g @anthropic-ai/claude-code @halitsever/claudegrid
 ```
 
 On a Mac, claudegrid uses iTerm2 when you run it there, and kitty, WezTerm or tmux otherwise. Terminal.app cannot split panes, so from Terminal.app claudegrid opens iTerm2, kitty or WezTerm when one is installed, and a tmux session in Terminal.app otherwise. The first time claudegrid drives iTerm2, macOS asks whether your terminal may control iTerm2. Allow it, or later in **System Settings → Privacy & Security → Automation**.
@@ -115,8 +115,8 @@ Completion also suggests the preset names from your config.
 ## Uninstall
 
 ```sh
-npm uninstall -g claudegrid      # npm or the install script
-sudo apt remove claudegrid       # .deb
+npm uninstall -g @halitsever/claudegrid   # npm or the install script
+sudo apt remove claudegrid                # .deb
 ```
 
 Next: [Usage](./usage)

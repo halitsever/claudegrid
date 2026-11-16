@@ -25,13 +25,13 @@ package() {
   # npm leaves files owned by the build user, pacman wants root.
   chown -R root:root "$pkgdir"
 
-  local cli="$pkgdir/usr/lib/node_modules/claudegrid/dist/cli.js"
+  local cli="$pkgdir/usr/lib/node_modules/@halitsever/claudegrid/dist/cli.js"
   install -d "$pkgdir/usr/share/bash-completion/completions" "$pkgdir/usr/share/zsh/site-functions" "$pkgdir/usr/share/fish/vendor_completions.d"
   node "$cli" completion bash > "$pkgdir/usr/share/bash-completion/completions/claudegrid"
   node "$cli" completion zsh > "$pkgdir/usr/share/zsh/site-functions/_claudegrid"
   node "$cli" completion fish > "$pkgdir/usr/share/fish/vendor_completions.d/claudegrid.fish"
-  install -Dm644 "$pkgdir/usr/lib/node_modules/claudegrid/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-  install -Dm644 "$pkgdir/usr/lib/node_modules/claudegrid/docs/public/logo.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/claudegrid.svg"
+  install -Dm644 "$pkgdir/usr/lib/node_modules/@halitsever/claudegrid/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 "$pkgdir/usr/lib/node_modules/@halitsever/claudegrid/docs/public/logo.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/claudegrid.svg"
   # Konsole reads profiles only at startup, so shipping this one lets claudegrid open tabs right away.
   printf '[General]\nName=claudegrid\nCommand=/usr/bin/claudegrid pane --konsole-tab\nLocalTabTitleFormat=▦ claudegrid\nRemoteTabTitleFormat=▦ claudegrid\n' | install -Dm644 /dev/stdin "$pkgdir/usr/share/konsole/claudegrid.profile"
   install -Dm644 /dev/stdin "$pkgdir/usr/share/applications/claudegrid.desktop" <<DESKTOP

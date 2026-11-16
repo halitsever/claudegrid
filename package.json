@@ -1,6 +1,6 @@
 {
-  "name": "claudegrid",
-  "version": "1.2.0",
+  "name": "@halitsever/claudegrid",
+  "version": "1.3.0",
   "description": "Run several Claude Code agents side by side in one terminal window: Konsole, iTerm2, tmux, kitty and WezTerm grids on Linux and macOS, with per-pane prompts, presets, git worktrees and a desktop app.",
   "keywords": [
     "claude",
@@ -54,5 +54,8 @@
   "devDependencies": {
     "@types/node": "^22.20.5",
     "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

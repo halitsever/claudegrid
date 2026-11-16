@@ -8,7 +8,7 @@ A grid of Claude Code agents, one command.<br>
 Konsole, tmux, kitty and WezTerm. A prompt, model and git branch per pane.<br>
 <br/>
 <a href="https://github.com/halitsever/claudegrid/actions/workflows/ci.yml"><img src="https://github.com/halitsever/claudegrid/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
-<a href="https://www.npmjs.com/package/claudegrid"><img src="https://img.shields.io/npm/v/claudegrid?color=e8573c" alt="npm"/></a>
+<a href="https://www.npmjs.com/package/@halitsever/claudegrid"><img src="https://img.shields.io/npm/v/@halitsever/claudegrid?color=e8573c" alt="npm"/></a>
 <img src="https://img.shields.io/github/sponsors/halitsever"/>
 </p>
 <p align="center">
@@ -38,7 +38,7 @@ Konsole, tmux, kitty and WezTerm. A prompt, model and git branch per pane.<br>
 </p>
 
 ```sh
-npm install -g claudegrid
+npm install -g @halitsever/claudegrid
 ```
 
 Debian and Ubuntu:

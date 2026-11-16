@@ -29,13 +29,15 @@ fi
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
-if [ -n "$script_dir" ] && grep -q '"name": "claudegrid"' "$script_dir/package.json" 2>/dev/null; then
+package="@halitsever/claudegrid"
+
+if [ -n "$script_dir" ] && grep -q "\"name\": \"$package\"" "$script_dir/package.json" 2>/dev/null; then
   say "building from $script_dir"
   (cd "$script_dir" && npm install --silent --no-audit --no-fund && npm pack --silent --pack-destination "$tmp" >/dev/null)
-  set -- "$tmp"/claudegrid-*.tgz
+  set -- "$tmp"/*claudegrid-*.tgz
   source=$1
-elif npm view claudegrid version >/dev/null 2>&1; then
-  source="claudegrid"
+elif npm view "$package" version >/dev/null 2>&1; then
+  source="$package"
 else
   source="https://github.com/$repo/releases/latest/download/claudegrid.tgz"
 fi
@@ -46,6 +48,13 @@ if [ ! -w "$(npm prefix -g)" ]; then
   prefix_args=(--prefix "$HOME/.local")
   say "global npm folder is not writable, installing into ~/.local"
 fi
+
+# Versions before 1.3.0 were published as plain "claudegrid" and would keep the command name taken.
+for prefix in "$(npm prefix -g)" "$HOME/.local"; do
+  if [ -d "$prefix/lib/node_modules/claudegrid" ]; then
+    npm uninstall -g --silent --prefix "$prefix" claudegrid >/dev/null 2>&1 && say "removed the old claudegrid package from $prefix"
+  fi
+done
 
 say "installing $source"
 # macOS ships bash 3.2, where "${arr[@]}" of an empty array trips set -u.

@@ -2,7 +2,7 @@
 import { computed, ref } from "vue";
 import { withBase } from "vitepress";
 
-const install = "npm install -g claudegrid";
+const install = "npm install -g @halitsever/claudegrid";
 const copied = ref(false);
 async function copyInstall() {
   try {

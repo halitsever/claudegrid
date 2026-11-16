@@ -2,7 +2,11 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.3.0] - 2026-11-16
+
+### Changed
+
+- The npm package is now `@halitsever/claudegrid`, because npm does not allow the plain name. The command is still `claudegrid`. `install.sh` removes an older plain `claudegrid` install first
 
 ### Added
 
