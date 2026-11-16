@@ -44,7 +44,8 @@
         "iterm2",
         "tmux",
         "kitty",
-        "wezterm"
+        "wezterm",
+        "terminal"
       ],
       "default": "auto",
       "description": "Terminal that hosts the grid. `auto` prefers the terminal you are in."
@@ -101,6 +102,11 @@
       "type": "boolean",
       "default": true,
       "description": "Open the grid as a new tab in the terminal you run claudegrid from (Konsole, WezTerm, tmux). false opens a new window."
+    },
+    "trust": {
+      "type": "boolean",
+      "default": false,
+      "description": "Mark every pane folder as trusted in Claude Code, so it does not ask the trust question in each pane."
     }
   },
   "$defs": {
@@ -185,7 +191,8 @@
             "iterm2",
             "tmux",
             "kitty",
-            "wezterm"
+            "wezterm",
+            "terminal"
           ],
           "default": "auto",
           "description": "Terminal that hosts the grid. `auto` prefers the terminal you are in."
@@ -237,6 +244,11 @@
           "type": "boolean",
           "default": true,
           "description": "Open the grid as a new tab in the terminal you run claudegrid from (Konsole, WezTerm, tmux). false opens a new window."
+        },
+        "trust": {
+          "type": "boolean",
+          "default": false,
+          "description": "Mark every pane folder as trusted in Claude Code, so it does not ask the trust question in each pane."
         }
       }
     }

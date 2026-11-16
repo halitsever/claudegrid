@@ -102,3 +102,29 @@ test("a dry run can preview a terminal that is not installed", () => {
 test("asking for an unusable backend says why", () => {
   assert.throws(() => pickBackend("wezterm", { PATH: "/nonexistent" }), /WezTerm backend is not usable/);
 });
+
+test("Terminal.app tiles one window per pane over the screen", async () => {
+  const { terminalScript } = await import("../dist/backends/terminal.js");
+  const plan = buildPlan({ cwd: sandbox(), grid: { layout: "2x2", panes: [{ name: 'say "hi"' }, {}, {}, {}] }, name: "demo" });
+  const commands = plan.panes.map((p) => `exec /tmp/pane-${p.index}.sh`);
+  const script = terminalScript(plan, commands, { left: 0, top: 25, width: 1000, height: 800 });
+  assert.match(script, /^tell application "Terminal"/);
+  assert.match(script, /set t0 to do script "exec \/tmp\/pane-0.sh"/);
+  assert.match(script, /set custom title of t0 to "say \\"hi\\""/);
+  assert.match(script, /set bounds of front window to \{0, 25, 500, 425\}/);
+  assert.match(script, /set bounds of front window to \{500, 425, 1000, 825\}/);
+});
+
+test("--trust marks every pane folder as accepted and keeps the rest of the file", async () => {
+  const { trustFolders } = await import("../dist/trust.js");
+  const { readFileSync, writeFileSync } = await import("node:fs");
+  const { join } = await import("node:path");
+  const dir = sandbox();
+  const file = join(dir, "claude.json");
+  writeFileSync(file, JSON.stringify({ theme: "dark", projects: { [dir]: { allowedTools: ["Bash"] } } }));
+  assert.ok(trustFolders([dir], file).includes(dir));
+  const state = JSON.parse(readFileSync(file, "utf8"));
+  assert.equal(state.theme, "dark");
+  assert.deepEqual(state.projects[dir], { allowedTools: ["Bash"], hasTrustDialogAccepted: true });
+  assert.deepEqual(trustFolders([dir], file), []);
+});

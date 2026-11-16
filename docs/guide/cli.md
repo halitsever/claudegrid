@@ -19,13 +19,14 @@ claudegrid [preset] [options] [-- claude flags]
 | `-m, --model <model>` | model for every pane |
 | `-w, --worktrees` | one git worktree and branch per pane |
 | `--no-worktrees` | turn worktrees off when the config turns them on |
-| `-b, --backend <name>` | `auto`, `konsole`, `tmux`, `kitty` or `wezterm` |
+| `-b, --backend <name>` | `auto`, `konsole`, `iterm2`, `tmux`, `kitty`, `wezterm` or `terminal` |
 | `-C, --cwd <dir>` | run from this directory |
 | `-c, --config <file>` | use this config instead of `.claudegrid.json` |
 | `-t, --name <name>` | name for the window, tmux session and worktree group |
 | `--command <cmd>` | run another program instead of `claude` |
 | `--no-keep-shell` | close the pane when the program exits |
 | `--no-new-tab` | open a new window instead of a tab in the terminal you are in |
+| `--trust` | mark every pane folder as trusted in Claude Code, so it skips the trust question |
 | `-d, --detach` | start the tmux session without attaching |
 | `--dry-run` | print the plan and the commands, open nothing |
 | `--json` | print the plan as JSON |

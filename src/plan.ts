@@ -25,6 +25,7 @@ export interface LaunchPlan {
   panes: PanePlan[];
   keepShell: boolean;
   newTab: boolean;
+  trust: boolean;
   /** Git root when worktrees are on, so they can be created right before launch. */
   repoRoot?: string;
 }
@@ -109,5 +110,5 @@ export function buildPlan(input: PlanInput): LaunchPlan {
     return { ...cell, name: label, title: pane.name ?? `claude ${cell.index + 1}`, cwd, argv, worktree };
   });
 
-  return { name, backend: config.backend ?? "auto", grid, panes, keepShell: config.keepShell ?? true, newTab: config.newTab ?? true, repoRoot };
+  return { name, backend: config.backend ?? "auto", grid, panes, keepShell: config.keepShell ?? true, newTab: config.newTab ?? true, trust: config.trust ?? false, repoRoot };
 }

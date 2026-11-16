@@ -7,6 +7,7 @@ import { describeGrid } from "../layout.js";
 import { buildPlan, type LaunchPlan } from "../plan.js";
 import { quoteAll } from "../shell.js";
 import { specFromPlan, writeSpec } from "../spec.js";
+import { claudeStatePath, trustFolders } from "../trust.js";
 import { CliError, didYouMean, info, style, tildify } from "../ui.js";
 
 export interface LaunchOptions {
@@ -22,6 +23,7 @@ export interface LaunchOptions {
   command?: string;
   keepShell?: boolean;
   newTab?: boolean;
+  trust?: boolean;
   name?: string;
   prompts: string[];
   extraArgs: string[];
@@ -34,7 +36,7 @@ function cliLayer(o: LaunchOptions): GridConfig {
   if (o.backend && !BACKENDS.includes(o.backend as BackendName)) {
     throw new CliError(`unknown backend "${o.backend}"`, didYouMean(o.backend, BACKENDS) ?? `pick one of ${BACKENDS.join(", ")}`);
   }
-  return { layout: o.layout, backend: o.backend as BackendName | undefined, worktrees: o.worktrees, model: o.model, command: o.command, keepShell: o.keepShell, newTab: o.newTab };
+  return { layout: o.layout, backend: o.backend as BackendName | undefined, worktrees: o.worktrees, model: o.model, command: o.command, keepShell: o.keepShell, newTab: o.newTab, trust: o.trust };
 }
 
 export function planFromOptions(o: LaunchOptions): LaunchPlan {
@@ -50,6 +52,7 @@ export function planJson(plan: LaunchPlan, backend: Backend) {
     columns: plan.grid.columns,
     keepShell: plan.keepShell,
     newTab: plan.newTab,
+    trust: plan.trust,
     panes: plan.panes.map((p) => ({ index: p.index + 1, name: p.name, title: p.title, column: p.col + 1, row: p.row + 1, cwd: p.cwd, command: p.argv, worktree: p.worktree })),
   };
 }
@@ -63,6 +66,7 @@ export async function dryRunSteps(plan: LaunchPlan, backend: Backend): Promise<s
     return `<pane${++fake}>`;
   };
   for (const pane of plan.panes.filter((p) => p.worktree)) steps.push(quoteAll(["git", "worktree", "add", pane.worktree!.path, pane.worktree!.branch]));
+  if (plan.trust) steps.push(`# trust ${[...new Set(plan.panes.map((p) => tildify(p.cwd)))].join(", ")} in ${tildify(claudeStatePath())}`);
   const ctx: LaunchContext = {
     plan,
     specPath: "<spec>.json",
@@ -89,6 +93,10 @@ export async function executeLaunch(plan: LaunchPlan, backend: Backend, options:
     if (!pane.worktree || !plan.repoRoot) continue;
     const result = ensureWorktree(plan.repoRoot, pane.worktree);
     notes.push(`${result === "created" ? "created" : "reusing"} worktree ${tildify(pane.worktree.path)} (${pane.worktree.branch})`);
+  }
+  if (plan.trust) {
+    const added = trustFolders(plan.panes.map((p) => p.cwd));
+    if (added.length) notes.push(`trusted ${added.map(tildify).join(", ")} in Claude Code`);
   }
   const spec = specFromPlan(plan);
   backend.prepareSpec?.(spec, plan);

@@ -59,7 +59,7 @@ brew install node tmux
 npm install -g @anthropic-ai/claude-code @halitsever/claudegrid
 ```
 
-On a Mac, claudegrid uses iTerm2 when you run it there, and kitty, WezTerm or tmux otherwise. Terminal.app cannot split panes, so from Terminal.app claudegrid opens iTerm2, kitty or WezTerm when one is installed, and a tmux session in Terminal.app otherwise. The first time claudegrid drives iTerm2, macOS asks whether your terminal may control iTerm2. Allow it, or later in **System Settings → Privacy & Security → Automation**.
+On a Mac, claudegrid uses iTerm2 when you run it there, and kitty, WezTerm or tmux otherwise. Terminal.app cannot split panes, so from Terminal.app claudegrid opens iTerm2, kitty or WezTerm when one is installed, a tmux session in Terminal.app when tmux is, and one tiled Terminal.app window per pane otherwise. The first time claudegrid drives iTerm2 or Terminal, macOS asks whether your terminal may control it. Allow it, or later in **System Settings → Privacy & Security → Automation**.
 
 ## Check your setup
 

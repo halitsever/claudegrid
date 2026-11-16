@@ -1,14 +1,14 @@
 ---
 title: Terminals
-description: How claudegrid builds Claude Code grids in KDE Konsole, tmux, kitty and WezTerm, and how it picks one automatically.
+description: How claudegrid builds Claude Code grids in KDE Konsole, iTerm2, Terminal.app, tmux, kitty and WezTerm, and how it picks one automatically.
 ---
 
 # Terminals
 
-claudegrid has four backends. With `backend: "auto"`, the default, it picks:
+claudegrid has six backends. With `backend: "auto"`, the default, it picks:
 
 1. the terminal you are running in (tmux first, since it can run inside the others)
-2. otherwise the first one available out of Konsole, kitty, WezTerm and tmux
+2. otherwise the first one available out of Konsole, iTerm2, kitty, WezTerm, tmux and Terminal.app
 
 `claudegrid doctor` shows which backends work on your machine and which one `auto` would use.
 
@@ -19,6 +19,7 @@ claudegrid has four backends. With `backend: "auto"`, the default, it picks:
 | `tmux` | a new tmux window when you are in tmux, otherwise a new session | a separate session it switches to | yes | tmux 3.1+ |
 | `kitty` | a new kitty window | the same | kitty's grid layout | `kitty` |
 | `wezterm` | a new tab when you run it in WezTerm, otherwise a new window | a new window | yes | WezTerm running |
+| `terminal` | one Terminal.app window per pane, tiled over the main screen | the same | yes, as windows | macOS |
 
 The [desktop app](./app) always opens a new window, since it does not run inside a terminal.
 
@@ -78,3 +79,7 @@ claudegrid writes a kitty session file and starts `kitty --session`. kitty's `gr
 ## WezTerm
 
 claudegrid uses `wezterm cli` to add a tab to the WezTerm window it runs in, or a new window when it runs elsewhere or with `--no-new-tab`, then splits it with the same percentages as tmux. Start WezTerm first.
+
+## Terminal.app
+
+Terminal.app cannot split a window, so claudegrid opens one window per pane over AppleScript and tiles them over the main screen in the grid's shape. `auto` only picks it when no other backend works, since tmux inside Terminal.app gives a real split. Ask for it with `-b terminal` or `"backend": "terminal"`. The first launch asks whether your terminal may control Terminal.
