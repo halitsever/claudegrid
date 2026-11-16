@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, realpathSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -7,7 +7,8 @@ export const CLI = new URL("../dist/cli.js", import.meta.url).pathname;
 
 /** A temp dir with an empty XDG config, so the developer's own claudegrid config never leaks into tests. */
 export function sandbox() {
-  const dir = mkdtempSync(join(tmpdir(), "claudegrid-test-"));
+  // The resolved path, because on macOS the temp dir sits behind the /var -> /private/var symlink.
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "claudegrid-test-")));
   process.env.XDG_CONFIG_HOME = join(dir, ".config");
   return dir;
 }

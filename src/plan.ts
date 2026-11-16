@@ -1,4 +1,4 @@
-import { existsSync, statSync } from "node:fs";
+import { existsSync, realpathSync, statSync } from "node:fs";
 import { basename, isAbsolute, join, relative, resolve } from "node:path";
 import type { BackendName, PaneConfig, ResolvedGrid } from "./config.js";
 import { gitRoot, worktreeTarget, type WorktreeTarget } from "./git.js";
@@ -46,6 +46,14 @@ function pickGrid(grid: ResolvedGrid, paneConfigs: PaneConfig[]): Grid {
   return autoGrid(paneConfigs.length || DEFAULT_PANES);
 }
 
+const realPath = (path: string) => {
+  try {
+    return realpathSync(path);
+  } catch {
+    return path;
+  }
+};
+
 export function buildPlan(input: PlanInput): LaunchPlan {
   const { grid: config } = input;
   const baseDir = config.dir ? resolve(input.cwd, config.dir) : input.cwd;
@@ -89,7 +97,8 @@ export function buildPlan(input: PlanInput): LaunchPlan {
     let cwd = pane.dir ? (isAbsolute(pane.dir) ? pane.dir : resolve(baseDir, pane.dir)) : baseDir;
     let worktree: WorktreeTarget | undefined;
     if (repoRoot) {
-      const rel = relative(repoRoot, cwd);
+      // git reports the resolved path, so compare resolved paths. On macOS /var is really /private/var.
+      const rel = relative(realPath(repoRoot), realPath(cwd));
       if (rel.startsWith("..") || isAbsolute(rel)) throw new CliError(`pane "${label}" uses ${cwd}, which is outside the repository`, "with worktrees on, every pane dir must be inside the repo");
       worktree = worktreeTarget(repoRoot, group, label);
       cwd = join(worktree.path, rel);
