@@ -4,12 +4,12 @@
 <img src="https://halitsever-api.vercel.app/api/repo-title?title=claudegrid">
 
 <p align="center">
-A grid of Claude Code agents, one command.<br>
-Konsole, iTerm2, Terminal.app, tmux, kitty and WezTerm. A prompt, model and git branch per pane.<br>
+Run a grid of Claude Code agents in one command, on Linux and macOS.<br>
+Konsole, iTerm2, Terminal.app, tmux, kitty and WezTerm. A prompt, model and git worktree per pane.<br>
 <br/>
 <a href="https://github.com/halitsever/claudegrid/actions/workflows/ci.yml"><img src="https://github.com/halitsever/claudegrid/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
 <a href="https://www.npmjs.com/package/@halitsever/claudegrid"><img src="https://img.shields.io/npm/v/@halitsever/claudegrid?color=e8573c" alt="npm"/></a>
-<img src="https://img.shields.io/github/sponsors/halitsever"/>
+<img src="https://img.shields.io/github/sponsors/halitsever" alt="GitHub Sponsors"/>
 </p>
 <p align="center">
 <a align="center" href="https://halitsever.github.io/claudegrid/">Documentation</a>
@@ -132,6 +132,12 @@ Read more: [desktop app](https://halitsever.github.io/claudegrid/guide/app), [co
 Found a bug or have an idea? Open an <a href="https://github.com/halitsever/claudegrid/issues">issue</a>.<br/>
 Read the <a href=".github/CONTRIBUTING.md">contributing guide</a> before sending a pull request.
 </p>
+
+### Related projects
+
+- [claude-code-vps](https://github.com/halitsever/claude-code-vps): one command sets up an Ubuntu server for Claude Code with Plasma over RDP, hardened SSH, Docker and config sync. It preinstalls claudegrid.
+- [HaltOS](https://github.com/halitsever/haltos): a monochrome KDE Plasma theme and OS identity layer for Claude Code servers, installed on top of claude-code-vps.
+- [explain-to-customer](https://github.com/halitsever/explain-to-customer): an agent skill for Claude Code that turns a code change into a short video, slides and diagrams for a client.
 
 <p align="center">
 <img src="https://halitsever-api.vercel.app/api/sponsor"/>
