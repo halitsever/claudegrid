@@ -44,6 +44,24 @@ export default defineConfig({
       ["meta", { property: "og:title", content: title }],
       ["meta", { property: "og:description", content: desc }],
     );
+    if (path === "") {
+      const app = {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        name: "claudegrid",
+        description,
+        url: siteUrl,
+        applicationCategory: "DeveloperApplication",
+        operatingSystem: "Linux, macOS",
+        downloadUrl: "https://www.npmjs.com/package/@halitsever/claudegrid",
+        codeRepository: "https://github.com/halitsever/claudegrid",
+        programmingLanguage: "TypeScript",
+        license: "https://opensource.org/licenses/MIT",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        author: { "@type": "Person", name: "Halit Sever", url: "https://github.com/halitsever" },
+      };
+      pageData.frontmatter.head.push(["script", { type: "application/ld+json" }, JSON.stringify(app)]);
+    }
   },
   themeConfig: {
     logo: "/logo.svg",
