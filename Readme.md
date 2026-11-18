@@ -4,8 +4,8 @@
 <img src="https://halitsever-api.vercel.app/api/repo-title?title=claudegrid">
 
 <p align="center">
-Run a grid of Claude Code agents in one command, on Linux and macOS.<br>
-Konsole, iTerm2, Terminal.app, tmux, kitty and WezTerm. A prompt, model and git worktree per pane.<br>
+Run multiple Claude Code agents in parallel with one command, on Linux and macOS.<br>
+tmux, Konsole, iTerm2, Terminal.app, kitty and WezTerm. A prompt, model and git worktree per pane.<br>
 <br/>
 <a href="https://github.com/halitsever/claudegrid/actions/workflows/ci.yml"><img src="https://github.com/halitsever/claudegrid/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
 <a href="https://www.npmjs.com/package/@halitsever/claudegrid"><img src="https://img.shields.io/npm/v/@halitsever/claudegrid?color=e8573c" alt="npm"/></a>
@@ -81,6 +81,8 @@ claudegrid --no-trust                        # let Claude Code ask its "trust th
 | WezTerm | Linux, macOS | split panes in a new tab or window |
 
 `auto` uses the terminal you run claudegrid in when it can split, and otherwise the first one installed in the order above, with Terminal.app last. Pick one with `-b`, for example `claudegrid -b terminal`. `claudegrid doctor` shows what works on your machine.
+
+Running Claude Code in tmux, on a server over SSH or detached in the background, has its own guide: [Claude Code in tmux](https://halitsever.github.io/claudegrid/guide/tmux).
 
 On macOS, the first launch asks whether your terminal may control iTerm2 or Terminal. Allow it, or later in **System Settings > Privacy & Security > Automation**.
 

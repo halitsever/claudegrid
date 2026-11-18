@@ -68,8 +68,8 @@ const terminals = [
     <section class="hero wrap">
       <div class="hero-copy">
         <p class="eyebrow"><span class="dot" />Claude Code, times four</p>
-        <h1>Run a grid of Claude Code agents.<br /><span class="grad">One command.</span></h1>
-        <p class="lede">claudegrid opens 2 to 16 Claude Code sessions side by side in Konsole, iTerm2, tmux, kitty or WezTerm, on Linux and macOS, and gives each pane its own task, model and git branch.</p>
+        <h1>Run Claude Code agents in parallel.<br /><span class="grad">One command.</span></h1>
+        <p class="lede">claudegrid opens multiple Claude Code agents side by side, 2 to 16 of them, in tmux, Konsole, iTerm2, kitty or WezTerm on Linux and macOS, and gives each pane its own task, model and git branch.</p>
         <div class="install">
           <code><span class="prompt">$</span> {{ install }}</code>
           <button type="button" class="copy" :aria-label="copied ? 'Copied' : 'Copy install command'" @click="copyInstall">{{ copied ? "Copied" : "Copy" }}</button>

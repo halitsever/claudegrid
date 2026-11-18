@@ -1,7 +1,7 @@
 {
   "name": "@halitsever/claudegrid",
   "version": "1.5.0",
-  "description": "Run a grid of Claude Code agents in one command on Linux and macOS: Konsole, iTerm2, tmux, kitty or WezTerm, with a prompt, model and worktree per pane",
+  "description": "Run multiple Claude Code agents in parallel with one command on Linux and macOS: tmux, Konsole, iTerm2, kitty or WezTerm, with a prompt, model and worktree per pane",
   "keywords": [
     "claude",
     "claude-code",
@@ -10,6 +10,8 @@
     "ai-agents",
     "coding-agent",
     "multi-agent",
+    "parallel-agents",
+    "claude-code-tmux",
     "terminal",
     "tmux",
     "konsole",
