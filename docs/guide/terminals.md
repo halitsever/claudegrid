@@ -61,6 +61,8 @@ macOS asks once whether your terminal may control iTerm2. If you said no, allow 
 
 ## tmux
 
+[Run Claude Code in tmux](./tmux) is the full guide, including SSH and detached sessions.
+
 Inside tmux, claudegrid opens a new window in your current session. With `--no-new-tab` it creates a separate session and switches you to it.
 
 Outside tmux, claudegrid creates a session called `claudegrid-<name>` and attaches to it. With `-d` it stays in the background:

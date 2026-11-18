@@ -3,7 +3,7 @@ import { defineConfig } from "vitepress";
 const hostname = "https://halitsever.github.io";
 const base = "/claudegrid/";
 const siteUrl = hostname + base;
-const description = "Run several Claude Code agents side by side in Konsole, iTerm2, tmux, kitty or WezTerm on Linux and macOS, with a prompt, model and git worktree per pane.";
+const description = "Run multiple Claude Code agents in parallel in tmux, Konsole, iTerm2, kitty or WezTerm on Linux and macOS, with a prompt, model and git worktree per pane.";
 
 export default defineConfig({
   lang: "en-US",
@@ -15,7 +15,7 @@ export default defineConfig({
   lastUpdated: true,
   sitemap: { hostname: siteUrl },
   head: [
-    ["meta", { name: "keywords", content: "claude code, claude, anthropic, ai coding agent, multi agent, parallel agents, git worktree, tmux, konsole, iterm2, kitty, wezterm, macos, linux, split terminal, cli" }],
+    ["meta", { name: "keywords", content: "claude code, claude, anthropic, ai coding agent, multi agent, claude code parallel agents, multiple claude code agents, claude code tmux, git worktree, tmux, konsole, iterm2, kitty, wezterm, macos, linux, split terminal, cli" }],
     ["meta", { name: "author", content: "Halit Sever" }],
     ["link", { rel: "preconnect", href: "https://fonts.googleapis.com" }],
     ["link", { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" }],
@@ -88,6 +88,7 @@ export default defineConfig({
           { text: "Presets", link: "/guide/presets" },
           { text: "Git worktrees", link: "/guide/worktrees" },
           { text: "Terminals", link: "/guide/terminals" },
+          { text: "Claude Code in tmux", link: "/guide/tmux" },
         ],
       },
       {

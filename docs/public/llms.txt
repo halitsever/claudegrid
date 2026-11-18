@@ -1,6 +1,6 @@
 # claudegrid
 
-> claudegrid is a Node.js CLI that opens a grid of Claude Code agents in one command, in KDE Konsole, iTerm2, Terminal.app, tmux, kitty or WezTerm on Linux and macOS, with a prompt, model and optional git worktree per pane. It also has a local desktop app (`claudegrid ui`) and presets in `.claudegrid.json`.
+> claudegrid is a Node.js CLI that runs multiple Claude Code agents in parallel, as a grid opened with one command, in KDE Konsole, iTerm2, Terminal.app, tmux, kitty or WezTerm on Linux and macOS, with a prompt, model and optional git worktree per pane. It also has a local desktop app (`claudegrid ui`) and presets in `.claudegrid.json`.
 
 Install with `npm install -g @halitsever/claudegrid` (Node.js 20+), or via the `.deb` from GitHub Releases or `install.sh`. It needs Claude Code and one of the supported terminals installed. Run `claudegrid doctor` to check your setup, and `claudegrid --dry-run` to print the commands without running them. The npm package name is scoped (`@halitsever/claudegrid`), and the command is `claudegrid`.
 
@@ -13,6 +13,7 @@ Install with `npm install -g @halitsever/claudegrid` (Node.js 20+), or via the `
 - [Presets](https://halitsever.github.io/claudegrid/guide/presets): named setups started with one word
 - [Git worktrees](https://halitsever.github.io/claudegrid/guide/worktrees): one branch and checkout per agent, then review, merge or clean up
 - [Terminals](https://halitsever.github.io/claudegrid/guide/terminals): how each terminal builds the grid and how one is picked automatically
+- [Claude Code in tmux](https://halitsever.github.io/claudegrid/guide/tmux): run the grid in tmux, detach and attach, use it over SSH
 - [CLI reference](https://halitsever.github.io/claudegrid/guide/cli): every command and option
 - [Troubleshooting](https://halitsever.github.io/claudegrid/guide/troubleshooting): qdbus6, old tmux, claude not found, worktree errors
 
