@@ -45,26 +45,41 @@ export default defineConfig({
       ["meta", { property: "og:description", content: desc }],
     );
     if (path === "") {
+      const license = "https://opensource.org/licenses/MIT";
+      const author = { "@type": "Person", name: "Halit Sever", url: "https://github.com/halitsever" };
       const app = {
         "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        name: "claudegrid",
-        description,
-        url: siteUrl,
-        applicationCategory: "DeveloperApplication",
-        operatingSystem: "Linux, macOS",
-        downloadUrl: "https://www.npmjs.com/package/@halitsever/claudegrid",
-        codeRepository: "https://github.com/halitsever/claudegrid",
-        programmingLanguage: "TypeScript",
-        license: "https://opensource.org/licenses/MIT",
-        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-        author: { "@type": "Person", name: "Halit Sever", url: "https://github.com/halitsever" },
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "@id": `${siteUrl}#app`,
+            name: "claudegrid",
+            description,
+            url: siteUrl,
+            applicationCategory: "DeveloperApplication",
+            operatingSystem: "Linux, macOS",
+            downloadUrl: "https://www.npmjs.com/package/@halitsever/claudegrid",
+            license,
+            offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+            author,
+          },
+          {
+            "@type": "SoftwareSourceCode",
+            "@id": `${siteUrl}#source`,
+            name: "claudegrid",
+            codeRepository: "https://github.com/halitsever/claudegrid",
+            programmingLanguage: "TypeScript",
+            license,
+            author,
+            targetProduct: { "@id": `${siteUrl}#app` },
+          },
+        ],
       };
       pageData.frontmatter.head.push(["script", { type: "application/ld+json" }, JSON.stringify(app)]);
     }
   },
   themeConfig: {
-    logo: "/logo.svg",
+    logo: { src: "/logo.svg", alt: "claudegrid logo" },
     nav: [
       { text: "Guide", link: "/guide/getting-started" },
       { text: "App", link: "/guide/app" },
