@@ -15,6 +15,8 @@ export default defineConfig({
   lastUpdated: true,
   sitemap: { hostname: siteUrl },
   head: [
+    /** Cloudflare Web Analytics, one token for every page on halitsever.github.io. */
+    ["script", { defer: "", src: "https://static.cloudflareinsights.com/beacon.min.js", "data-cf-beacon": '{"token": "dd7e54d3f48841c187d72d9dbb92a6b6"}' }],
     ["meta", { name: "keywords", content: "claude code, claude, anthropic, ai coding agent, multi agent, claude code parallel agents, multiple claude code agents, claude code tmux, git worktree, tmux, konsole, iterm2, kitty, wezterm, macos, linux, split terminal, cli" }],
     ["meta", { name: "author", content: "Halit Sever" }],
     ["link", { rel: "preconnect", href: "https://fonts.googleapis.com" }],
