@@ -12,7 +12,7 @@ tmux, Konsole, iTerm2, Terminal.app, kitty and WezTerm. A prompt, model and git 
 <img src="https://img.shields.io/github/sponsors/halitsever" alt="GitHub Sponsors"/>
 </p>
 <p align="center">
-<a align="center" href="https://halitsever.github.io/claudegrid/">Documentation</a>
+<a align="center" href="https://projects.halit.org/claudegrid/">Documentation</a>
   </p>
 </p>
 
@@ -82,7 +82,7 @@ claudegrid --no-trust                        # let Claude Code ask its "trust th
 
 `auto` uses the terminal you run claudegrid in when it can split, and otherwise the first one installed in the order above, with Terminal.app last. Pick one with `-b`, for example `claudegrid -b terminal`. `claudegrid doctor` shows what works on your machine.
 
-Running Claude Code in tmux, on a server over SSH or detached in the background, has its own guide: [Claude Code in tmux](https://halitsever.github.io/claudegrid/guide/tmux).
+Running Claude Code in tmux, on a server over SSH or detached in the background, has its own guide: [Claude Code in tmux](https://projects.halit.org/claudegrid/guide/tmux).
 
 On macOS, the first launch asks whether your terminal may control iTerm2 or Terminal. Allow it, or later in **System Settings > Privacy & Security > Automation**.
 
@@ -97,7 +97,7 @@ claudegrid desktop install     # add claudegrid to your app menu
 <img src="docs/public/ui-light.png" alt="The claudegrid app: settings on the left, the grid of panes in the middle, the selected pane's prompt on the right" width="860"/>
 </p>
 
-Pick a project, click a pane to give it a name, prompt and model, preview the commands and launch. It can also save presets and clean up worktrees. It runs on `127.0.0.1` behind a random token, so only you can reach it. [More about the app](https://halitsever.github.io/claudegrid/guide/app).
+Pick a project, click a pane to give it a name, prompt and model, preview the commands and launch. It can also save presets and clean up worktrees. It runs on `127.0.0.1` behind a random token, so only you can reach it. [More about the app](https://projects.halit.org/claudegrid/guide/app).
 
 ### Config and presets
 
@@ -105,7 +105,7 @@ Pick a project, click a pane to give it a name, prompt and model, preview the co
 
 ```json
 {
-  "$schema": "https://halitsever.github.io/claudegrid/schema.json",
+  "$schema": "https://projects.halit.org/claudegrid/schema.json",
   "model": "sonnet",
   "panes": [
     { "name": "api", "dir": "server", "prompt": "Add rate limiting to the public endpoints" },
@@ -124,7 +124,7 @@ claudegrid          # the four panes above
 claudegrid swarm    # the preset
 ```
 
-Read more: [desktop app](https://halitsever.github.io/claudegrid/guide/app), [configuration](https://halitsever.github.io/claudegrid/guide/configuration), [presets](https://halitsever.github.io/claudegrid/guide/presets), [worktrees](https://halitsever.github.io/claudegrid/guide/worktrees), [terminals](https://halitsever.github.io/claudegrid/guide/terminals), [CLI reference](https://halitsever.github.io/claudegrid/guide/cli).
+Read more: [desktop app](https://projects.halit.org/claudegrid/guide/app), [configuration](https://projects.halit.org/claudegrid/guide/configuration), [presets](https://projects.halit.org/claudegrid/guide/presets), [worktrees](https://projects.halit.org/claudegrid/guide/worktrees), [terminals](https://projects.halit.org/claudegrid/guide/terminals), [CLI reference](https://projects.halit.org/claudegrid/guide/cli).
 
 <p align="center">
 <a href="https://github.com/halitsever/claudegrid/issues"><img src="https://halitsever-api.vercel.app/api/issue"/></a>

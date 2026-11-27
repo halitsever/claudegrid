@@ -6,20 +6,20 @@ Install with `npm install -g @halitsever/claudegrid` (Node.js 20+), or via the `
 
 ## Docs
 
-- [Getting started](https://halitsever.github.io/claudegrid/guide/getting-started): install, `claudegrid doctor` and a first grid
-- [Usage](https://halitsever.github.io/claudegrid/guide/usage): layouts, per-pane prompts and models, passing flags to every claude
-- [Desktop app](https://halitsever.github.io/claudegrid/guide/app): `claudegrid ui`, a local window to set up, preview and launch panes
-- [Configuration](https://halitsever.github.io/claudegrid/guide/configuration): `.claudegrid.json` and the user config, with every key
-- [Presets](https://halitsever.github.io/claudegrid/guide/presets): named setups started with one word
-- [Git worktrees](https://halitsever.github.io/claudegrid/guide/worktrees): one branch and checkout per agent, then review, merge or clean up
-- [Terminals](https://halitsever.github.io/claudegrid/guide/terminals): how each terminal builds the grid and how one is picked automatically
-- [Claude Code in tmux](https://halitsever.github.io/claudegrid/guide/tmux): run the grid in tmux, detach and attach, use it over SSH
-- [CLI reference](https://halitsever.github.io/claudegrid/guide/cli): every command and option
-- [Troubleshooting](https://halitsever.github.io/claudegrid/guide/troubleshooting): qdbus6, old tmux, claude not found, worktree errors
+- [Getting started](https://projects.halit.org/claudegrid/guide/getting-started): install, `claudegrid doctor` and a first grid
+- [Usage](https://projects.halit.org/claudegrid/guide/usage): layouts, per-pane prompts and models, passing flags to every claude
+- [Desktop app](https://projects.halit.org/claudegrid/guide/app): `claudegrid ui`, a local window to set up, preview and launch panes
+- [Configuration](https://projects.halit.org/claudegrid/guide/configuration): `.claudegrid.json` and the user config, with every key
+- [Presets](https://projects.halit.org/claudegrid/guide/presets): named setups started with one word
+- [Git worktrees](https://projects.halit.org/claudegrid/guide/worktrees): one branch and checkout per agent, then review, merge or clean up
+- [Terminals](https://projects.halit.org/claudegrid/guide/terminals): how each terminal builds the grid and how one is picked automatically
+- [Claude Code in tmux](https://projects.halit.org/claudegrid/guide/tmux): run the grid in tmux, detach and attach, use it over SSH
+- [CLI reference](https://projects.halit.org/claudegrid/guide/cli): every command and option
+- [Troubleshooting](https://projects.halit.org/claudegrid/guide/troubleshooting): qdbus6, old tmux, claude not found, worktree errors
 
 ## Optional
 
-- [Config JSON schema](https://halitsever.github.io/claudegrid/schema.json): schema for `.claudegrid.json`
+- [Config JSON schema](https://projects.halit.org/claudegrid/schema.json): schema for `.claudegrid.json`
 - [Changelog](https://github.com/halitsever/claudegrid/blob/main/CHANGELOG.md): release notes
 - [Source](https://github.com/halitsever/claudegrid): repository
 - [npm](https://www.npmjs.com/package/@halitsever/claudegrid): package page

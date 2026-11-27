@@ -33,5 +33,5 @@ CI (`.github/workflows/ci.yml`) runs these on Node 20, 22 and 24, plus a macOS j
 
 ## Docs site
 
-- The VitePress site lives in `docs/` and deploys to https://halitsever.github.io/claudegrid/ from `.github/workflows/docs.yml` on pushes to `main` that touch `docs/`. That workflow checks out full history because `lastUpdated` reads git.
+- The VitePress site lives in `docs/` and deploys to https://projects.halit.org/claudegrid/ from `.github/workflows/docs.yml` on pushes to `main` that touch `docs/`. That workflow checks out full history because `lastUpdated` reads git.
 - A new guide page goes into the sidebar in `docs/.vitepress/config.mts` and into `docs/public/llms.txt`.
