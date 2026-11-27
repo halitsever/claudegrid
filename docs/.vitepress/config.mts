@@ -6,6 +6,8 @@ const siteUrl = hostname + base;
 const description = "Run multiple Claude Code agents in parallel in tmux, Konsole, iTerm2, kitty or WezTerm on Linux and macOS, with a prompt, model and git worktree per pane.";
 
 export default defineConfig({
+  /** keeps the page hash map out of every page's HTML, which Semrush reads as a low text-to-HTML ratio */
+  metaChunk: true,
   lang: "en-US",
   title: "claudegrid",
   titleTemplate: ":title | claudegrid",
