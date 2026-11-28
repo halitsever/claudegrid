@@ -28,6 +28,12 @@ Install with `npm install -g @halitsever/claudegrid` (Node.js 20+), or via the `
 - [xterm-kitty unknown terminal type](https://projects.halit.org/claudegrid/blog/xterm-kitty-unknown-terminal-type): kitty terminfo over SSH
 - [Git worktree vs clone vs branch](https://projects.halit.org/claudegrid/blog/git-worktree-vs-clone): disk use, shared state, when to clone
 - [iTerm2 split panes](https://projects.halit.org/claudegrid/blog/iterm2-split-pane): shortcuts and AppleScript layouts
+- [tmux cheat sheet](https://projects.halit.org/claudegrid/blog/tmux-cheat-sheet): default keys and commands for tmux 3.6
+- [tmux scroll up](https://projects.halit.org/claudegrid/blog/tmux-scroll-up): copy mode, mouse wheel, search and history-limit
+- [tmux kill session](https://projects.halit.org/claudegrid/blog/tmux-kill-session): kill-session, kill-server, windows and panes
+- [tmux vs screen](https://projects.halit.org/claudegrid/blog/tmux-vs-screen): differences from both manuals and when to use each
+- [tmux config file](https://projects.halit.org/claudegrid/blog/tmux-config): tmux.conf location, a starting config, source-file reload
+- [tmux rename window](https://projects.halit.org/claudegrid/blog/tmux-rename-window): renaming windows and sessions, automatic-rename
 
 ## Optional
 

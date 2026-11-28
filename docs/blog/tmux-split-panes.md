@@ -123,5 +123,7 @@ It also names each pane in the border (`pane-border-status top`), setting the op
 
 - [tmux detach](/blog/tmux-detach): keep the grid running after you disconnect
 - [iTerm2 split panes](/blog/iterm2-split-pane): the same idea on macOS
+- [tmux cheat sheet](/blog/tmux-cheat-sheet): pane, window and layout keys in one table
+- [tmux scroll up](/blog/tmux-scroll-up): read back through a pane's output
 - [Terminals](/guide/terminals): how claudegrid builds grids in each terminal
 - [Claude Code worktrees](/claude-code-worktree): one branch per pane
