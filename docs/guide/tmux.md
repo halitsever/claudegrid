@@ -3,7 +3,7 @@ title: Run Claude Code in tmux
 description: "Run several Claude Code agents in one tmux window with claudegrid: an even grid, a task and git worktree per pane, and sessions you can reattach over SSH."
 ---
 
-# Run Claude Code in tmux
+# Running a grid of Claude Code agents in tmux
 
 tmux is the backend that works everywhere: in any terminal on Linux or macOS, on a server over SSH, and inside iTerm2 or kitty when you want an exact grid. claudegrid builds the tmux layout for you, starts `claude` in every pane and hands each pane its own prompt, model and branch.
 

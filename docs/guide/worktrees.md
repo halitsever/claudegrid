@@ -3,7 +3,7 @@ title: The --worktrees option
 description: Reference for claudegrid's --worktrees option and the worktrees key. Where each pane's checkout goes, how branches are named, and how to list and clean them.
 ---
 
-# The --worktrees option
+# The --worktrees option: a branch for each pane
 
 For what worktrees do for Claude Code agents and when to use them, see [Claude Code worktrees](/claude-code-worktree). This page is the reference for the option itself.
 

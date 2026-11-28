@@ -15,7 +15,7 @@ faq:
     a: "Run claudegrid worktrees clean. It removes clean worktrees and merged branches and skips anything with uncommitted changes or unmerged commits unless you pass --force."
 ---
 
-# Claude Code worktrees: one branch per agent
+# Give every Claude Code agent its own git worktree
 
 Two Claude Code sessions in the same checkout edit the same files, and sooner or later one overwrites the other. A git worktree fixes that: each agent gets its own folder and its own branch, while all of them share one repository history. Claude Code can create one worktree per session. claudegrid creates one per pane and opens the whole grid in one command:
 

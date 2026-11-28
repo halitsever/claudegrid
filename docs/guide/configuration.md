@@ -3,7 +3,7 @@ title: Configuration
 description: Configure claudegrid with a .claudegrid.json project file or a user config. Set layouts, per-pane names, prompts, models, directories and Claude Code flags.
 ---
 
-# Configuration
+# Configuration files and options
 
 claudegrid reads two optional JSON files:
 

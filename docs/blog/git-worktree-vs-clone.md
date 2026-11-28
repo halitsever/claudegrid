@@ -14,7 +14,7 @@ faq:
     a: "Yes. Linked worktrees use the main repository's .git directory, so hooks in .git/hooks and the repository config apply to all of them."
 ---
 
-# Git worktree vs multiple clones vs branches
+# Git worktree, second clone or branch switch: which one to use
 
 <p class="post-meta">Halit Sever · 28 November 2026</p>
 

@@ -14,7 +14,7 @@ faq:
     a: "Run tmux attach -d -t name to attach and detach every other client at once, or press Ctrl-b D inside tmux to pick a client to detach from a list."
 ---
 
-# tmux detach: leave a session running and come back
+# How to detach from tmux and attach again later
 
 <p class="post-meta">Halit Sever · 28 November 2026</p>
 

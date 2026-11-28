@@ -14,7 +14,7 @@ faq:
     a: "It works as a fallback, but programs then treat kitty as a generic xterm and skip kitty-specific features. Copying the real terminfo is the better fix."
 ---
 
-# Fix "'xterm-kitty': unknown terminal type" over SSH
+# "'xterm-kitty': unknown terminal type" over SSH: why it happens and four fixes
 
 <p class="post-meta">Halit Sever · 28 November 2026</p>
 

@@ -14,7 +14,7 @@ faq:
     a: "Pass -l to split-window, as lines or columns or as a percentage: tmux split-window -h -l 30% makes the new pane 30 percent of the width."
 ---
 
-# tmux split panes: vertical, horizontal and grids
+# How to split tmux panes into rows, columns and even grids
 
 <p class="post-meta">Halit Sever · 28 November 2026</p>
 

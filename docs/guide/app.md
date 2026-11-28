@@ -3,7 +3,7 @@ title: Desktop app
 description: Use claudegrid without the terminal. claudegrid ui opens a local app window to set up panes, prompts, models and worktrees, preview the commands and launch the grid.
 ---
 
-# Desktop app
+# The claudegrid desktop app
 
 Everything claudegrid does from the command line also works from a window:
 

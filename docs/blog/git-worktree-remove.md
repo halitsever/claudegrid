@@ -14,7 +14,7 @@ faq:
     a: "If git says the branch is used by a worktree, the worktree still exists. Remove the worktree first. If git says the branch is not fully merged, it has commits you would lose; use git branch -D only if you mean it."
 ---
 
-# git worktree remove, prune and cleanup
+# Removing git worktrees and cleaning up their branches
 
 <p class="post-meta">Halit Sever · 28 November 2026</p>
 

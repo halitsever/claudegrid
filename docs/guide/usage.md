@@ -3,7 +3,7 @@ title: Usage
 description: Open a grid of Claude Code sessions, pick a layout, give every pane its own prompt and model, and pass Claude Code flags to all of them.
 ---
 
-# Usage
+# Using claudegrid: layouts, tasks and models
 
 ```sh
 claudegrid [preset] [options] [-- claude flags]
