@@ -153,7 +153,7 @@ const terminals = [
         <p class="kicker">Git worktrees</p>
         <h2>Every agent on its own branch</h2>
         <p>Four agents in one checkout overwrite each other. With <code>-w</code> each pane gets its own worktree and branch next to your repo. Open the grid again and every agent picks up where it stopped.</p>
-        <a class="more" :href="withBase('/guide/worktrees')">Worktrees guide →</a>
+        <a class="more" :href="withBase('/claude-code-worktree')">Claude Code worktrees →</a>
       </div>
       <div class="term">
         <pre><span class="prompt">$</span> claudegrid <span class="flag">-w -n</span> 3
