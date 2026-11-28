@@ -1,6 +1,6 @@
 ---
 title: Run Claude Code in tmux
-description: Run several Claude Code agents in one tmux window or session with claudegrid, with an even grid, a task and git worktree per pane, and sessions you can detach from and attach to over SSH.
+description: "Run several Claude Code agents in one tmux window with claudegrid: an even grid, a task and git worktree per pane, and sessions you can reattach over SSH."
 ---
 
 # Run Claude Code in tmux
