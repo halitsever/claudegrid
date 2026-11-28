@@ -3,7 +3,7 @@ title: Getting started
 description: Install claudegrid with npm or a one line script, check your setup with claudegrid doctor and open your first grid of Claude Code sessions.
 ---
 
-# Getting started
+# Getting started with claudegrid
 
 claudegrid opens several [Claude Code](https://claude.com/claude-code) sessions in one terminal window, laid out as a grid. Each pane can work on its own task, with its own model and, if you want, on its own git branch.
 

@@ -3,7 +3,7 @@ title: CLI reference
 description: Every claudegrid command and option, from launching grids to init, doctor, update, presets, worktrees and shell completion.
 ---
 
-# CLI reference
+# Every claudegrid command and flag
 
 ## claudegrid
 

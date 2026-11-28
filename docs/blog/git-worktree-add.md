@@ -14,7 +14,7 @@ faq:
     a: "Anywhere outside the main working tree is simplest, usually a sibling folder such as ../app-hotfix. Inside the repository they show up as untracked files unless you ignore them."
 ---
 
-# git worktree add: work on two branches at once
+# git worktree add: check out a second branch in its own folder
 
 <p class="post-meta">Halit Sever · 28 November 2026</p>
 

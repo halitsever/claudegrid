@@ -3,7 +3,7 @@ title: Terminals
 description: How claudegrid builds Claude Code grids in KDE Konsole, iTerm2, Terminal.app, tmux, kitty and WezTerm, and how it picks one automatically.
 ---
 
-# Terminals
+# Supported terminals and backends
 
 claudegrid has six backends. With `backend: "auto"`, the default, it picks:
 

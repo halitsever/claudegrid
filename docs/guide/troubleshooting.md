@@ -3,7 +3,7 @@ title: Troubleshooting
 description: Fix common claudegrid problems such as a missing qdbus6, tmux being too old, claude not found in a pane or worktree errors.
 ---
 
-# Troubleshooting
+# Fixing common claudegrid errors
 
 Start with:
 

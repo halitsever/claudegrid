@@ -14,7 +14,7 @@ faq:
     a: "Yes, with AppleScript: tell a session to split vertically or horizontally with a profile, optionally with a command to run in the new pane. macOS asks once for Automation permission."
 ---
 
-# iTerm2 split panes and opening them from a script
+# Splitting iTerm2 panes by hand and from AppleScript
 
 <p class="post-meta">Halit Sever · 28 November 2026</p>
 

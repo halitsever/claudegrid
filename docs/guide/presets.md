@@ -3,7 +3,7 @@ title: Presets
 description: Save named claudegrid setups, such as a review team or a swarm of agents on separate worktrees, and start them with one word.
 ---
 
-# Presets
+# Saving grid layouts as presets
 
 A preset is a named set of grid options. Start one by passing its name:
 
