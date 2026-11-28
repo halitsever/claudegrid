@@ -11,11 +11,23 @@ Install with `npm install -g @halitsever/claudegrid` (Node.js 20+), or via the `
 - [Desktop app](https://projects.halit.org/claudegrid/guide/app): `claudegrid ui`, a local window to set up, preview and launch panes
 - [Configuration](https://projects.halit.org/claudegrid/guide/configuration): `.claudegrid.json` and the user config, with every key
 - [Presets](https://projects.halit.org/claudegrid/guide/presets): named setups started with one word
-- [Git worktrees](https://projects.halit.org/claudegrid/guide/worktrees): one branch and checkout per agent, then review, merge or clean up
+- [Claude Code worktrees](https://projects.halit.org/claudegrid/claude-code-worktree): one git worktree and branch per Claude Code agent, claude --worktree compared with claudegrid -w
+- [The --worktrees option](https://projects.halit.org/claudegrid/guide/worktrees): reference for -w and the worktrees key, branch names, listing and cleaning
 - [Terminals](https://projects.halit.org/claudegrid/guide/terminals): how each terminal builds the grid and how one is picked automatically
 - [Claude Code in tmux](https://projects.halit.org/claudegrid/guide/tmux): run the grid in tmux, detach and attach, use it over SSH
 - [CLI reference](https://projects.halit.org/claudegrid/guide/cli): every command and option
 - [Troubleshooting](https://projects.halit.org/claudegrid/guide/troubleshooting): qdbus6, old tmux, claude not found, worktree errors
+
+## Blog
+
+- [tmux detach](https://projects.halit.org/claudegrid/blog/tmux-detach): detach and attach sessions, kick other clients
+- [tmux split panes](https://projects.halit.org/claudegrid/blog/tmux-split-panes): split keys, split-window sizes, layouts and grids
+- [git worktree add](https://projects.halit.org/claudegrid/blog/git-worktree-add): new, existing and remote branches, detached HEAD
+- [What is a git worktree?](https://projects.halit.org/claudegrid/blog/what-is-a-git-worktree): main and linked worktrees and what they share
+- [git worktree remove and prune](https://projects.halit.org/claudegrid/blog/git-worktree-remove): removing dirty and locked worktrees, pruning, branch cleanup
+- [xterm-kitty unknown terminal type](https://projects.halit.org/claudegrid/blog/xterm-kitty-unknown-terminal-type): kitty terminfo over SSH
+- [Git worktree vs clone vs branch](https://projects.halit.org/claudegrid/blog/git-worktree-vs-clone): disk use, shared state, when to clone
+- [iTerm2 split panes](https://projects.halit.org/claudegrid/blog/iterm2-split-pane): shortcuts and AppleScript layouts
 
 ## Optional
 

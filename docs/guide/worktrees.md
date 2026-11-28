@@ -1,9 +1,11 @@
 ---
-title: Git worktrees
-description: Give every Claude Code agent its own git worktree and branch with claudegrid --worktrees, then review, merge or clean them up.
+title: The --worktrees option
+description: Reference for claudegrid's --worktrees option and the worktrees key. Where each pane's checkout goes, how branches are named, and how to list and clean them.
 ---
 
-# Git worktrees
+# The --worktrees option
+
+For what worktrees do for Claude Code agents and when to use them, see [Claude Code worktrees](/claude-code-worktree). This page is the reference for the option itself.
 
 Several agents editing the same checkout will overwrite each other. With worktrees on, each pane gets its own checkout of the repo on its own branch:
 

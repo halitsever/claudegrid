@@ -3,6 +3,18 @@ import { defineConfig } from "vitepress";
 const hostname = "https://projects.halit.org";
 const base = "/claudegrid/";
 const siteUrl = hostname + base;
+const BLOG: [string, string][] = [
+  ["tmux-detach", "tmux detach"],
+  ["tmux-split-panes", "tmux split panes"],
+  ["git-worktree-add", "git worktree add"],
+  ["what-is-a-git-worktree", "What is a git worktree?"],
+  ["git-worktree-remove", "git worktree remove and prune"],
+  ["xterm-kitty-unknown-terminal-type", "xterm-kitty unknown terminal"],
+  ["git-worktree-vs-clone", "Worktree vs clone vs branch"],
+  ["iterm2-split-pane", "iTerm2 split panes"],
+];
+const author = { "@type": "Person", name: "Halit Sever", url: "https://halit.org" };
+
 const description = "Run multiple Claude Code agents in parallel in tmux, Konsole, iTerm2, kitty or WezTerm on Linux and macOS, with a prompt, model and git worktree per pane.";
 
 export default defineConfig({
@@ -41,7 +53,42 @@ export default defineConfig({
     const url = siteUrl + path;
     const title = pageData.frontmatter.title ?? pageData.title ?? "claudegrid";
     const desc = pageData.frontmatter.description ?? pageData.description ?? description;
+    const graph: Record<string, unknown>[] = [];
+    if (path.startsWith("blog/") && path !== "blog/") {
+      graph.push(
+        {
+          "@type": "BlogPosting",
+          headline: title,
+          description: desc,
+          url,
+          mainEntityOfPage: url,
+          image: siteUrl + "og.png",
+          inLanguage: "en-US",
+          datePublished: pageData.frontmatter.date,
+          dateModified: pageData.lastUpdated ? new Date(pageData.lastUpdated).toISOString() : pageData.frontmatter.date,
+          author,
+          publisher: author,
+        },
+        {
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "claudegrid", item: siteUrl },
+            { "@type": "ListItem", position: 2, name: "Blog", item: siteUrl + "blog/" },
+            { "@type": "ListItem", position: 3, name: title, item: url },
+          ],
+        },
+      );
+    } else if (path === "blog/") {
+      graph.push({ "@type": "Blog", name: "claudegrid blog", description: desc, url, inLanguage: "en-US", author });
+    } else if (path !== "") {
+      graph.push({ "@type": "TechArticle", headline: title, description: desc, url, inLanguage: "en-US", author, ...(pageData.lastUpdated ? { dateModified: new Date(pageData.lastUpdated).toISOString() } : {}) });
+    }
+    const faq = pageData.frontmatter.faq as { q: string; a: string }[] | undefined;
+    if (faq?.length) {
+      graph.push({ "@type": "FAQPage", mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) });
+    }
     pageData.frontmatter.head ??= [];
+    if (graph.length) pageData.frontmatter.head.push(["script", { type: "application/ld+json" }, JSON.stringify({ "@context": "https://schema.org", "@graph": graph })]);
     pageData.frontmatter.head.push(
       ["link", { rel: "canonical", href: url }],
       ["meta", { property: "og:url", content: url }],
@@ -77,9 +124,22 @@ export default defineConfig({
       { text: "App", link: "/guide/app" },
       { text: "Config", link: "/guide/configuration" },
       { text: "CLI", link: "/guide/cli" },
+      { text: "Blog", link: "/blog/" },
       { text: "GitHub", link: "https://github.com/halitsever/claudegrid" },
     ],
-    sidebar: [
+    sidebar: {
+      "/blog/": [
+        { text: "Blog", items: [{ text: "All posts", link: "/blog/" }, ...BLOG.map(([slug, text]) => ({ text, link: `/blog/${slug}` }))] },
+        {
+          text: "claudegrid",
+          items: [
+            { text: "Claude Code worktrees", link: "/claude-code-worktree" },
+            { text: "Claude Code in tmux", link: "/guide/tmux" },
+            { text: "Getting started", link: "/guide/getting-started" },
+          ],
+        },
+      ],
+      "/": [
       {
         text: "Introduction",
         items: [
@@ -93,7 +153,8 @@ export default defineConfig({
         items: [
           { text: "Configuration", link: "/guide/configuration" },
           { text: "Presets", link: "/guide/presets" },
-          { text: "Git worktrees", link: "/guide/worktrees" },
+          { text: "Claude Code worktrees", link: "/claude-code-worktree" },
+          { text: "The --worktrees option", link: "/guide/worktrees" },
           { text: "Terminals", link: "/guide/terminals" },
           { text: "Claude Code in tmux", link: "/guide/tmux" },
         ],
@@ -106,7 +167,8 @@ export default defineConfig({
           { text: "Changelog", link: "https://github.com/halitsever/claudegrid/blob/main/CHANGELOG.md" },
         ],
       },
-    ],
+      ],
+    },
     socialLinks: [{ icon: "github", link: "https://github.com/halitsever/claudegrid" }],
     editLink: { pattern: "https://github.com/halitsever/claudegrid/edit/main/docs/:path" },
     search: { provider: "local" },

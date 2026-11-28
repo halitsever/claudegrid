@@ -61,7 +61,7 @@ cd ~/projects/my-app
 claudegrid -b tmux -w
 ```
 
-With `-w` every agent works on its own branch next to the repo, so parallel agents do not overwrite each other's files. [Git worktrees](./worktrees) covers reviewing and cleaning them up.
+With `-w` every agent works on its own branch next to the repo, so parallel agents do not overwrite each other's files. [The --worktrees option](./worktrees) covers reviewing and cleaning them up.
 
 ## What claudegrid changes in tmux
 
