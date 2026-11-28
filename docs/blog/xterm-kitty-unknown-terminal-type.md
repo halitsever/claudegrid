@@ -110,5 +110,6 @@ If the server lacks kitty's terminfo, tmux refuses to start with the `missing or
 
 - [tmux detach](/blog/tmux-detach): keep the server session running
 - [tmux split panes](/blog/tmux-split-panes): grids by hand
+- [tmux config file](/blog/tmux-config): default-terminal and other settings
 - [Run Claude Code in tmux](/guide/tmux): claudegrid over SSH
 - [Troubleshooting](/guide/troubleshooting): other claudegrid problems

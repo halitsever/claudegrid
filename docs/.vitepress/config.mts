@@ -12,6 +12,12 @@ const BLOG: [string, string][] = [
   ["xterm-kitty-unknown-terminal-type", "xterm-kitty unknown terminal"],
   ["git-worktree-vs-clone", "Worktree vs clone vs branch"],
   ["iterm2-split-pane", "iTerm2 split panes"],
+  ["tmux-cheat-sheet", "tmux cheat sheet"],
+  ["tmux-scroll-up", "tmux scroll up"],
+  ["tmux-kill-session", "tmux kill session"],
+  ["tmux-vs-screen", "tmux vs screen"],
+  ["tmux-config", "tmux config file"],
+  ["tmux-rename-window", "tmux rename window"],
 ];
 const author = { "@type": "Person", name: "Halit Sever", url: "https://halit.org" };
 

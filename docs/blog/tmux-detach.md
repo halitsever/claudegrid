@@ -92,7 +92,7 @@ tmux attach -d -t claude
 
 ## Does it survive closing the terminal?
 
-Yes. Closing a terminal window or losing an SSH connection detaches the client, and the session stays. That is why tmux is the standard way to keep work running on a remote machine. Two things do end a session: `tmux kill-session -t name` (or exiting every window in it), and a reboot. tmux also has a `destroy-unattached` option, off by default, that would end a session when its last client leaves.
+Yes. Closing a terminal window or losing an SSH connection detaches the client, and the session stays. That is why tmux is the standard way to keep work running on a remote machine. Two things do end a session: `tmux kill-session -t name` (or exiting every window in it), and a reboot. [tmux kill session](/blog/tmux-kill-session) covers the variants. tmux also has a `destroy-unattached` option, off by default, that would end a session when its last client leaves.
 
 ## Running Claude Code agents you can detach from
 
@@ -129,6 +129,8 @@ Inside a claudegrid session the usual keys apply: `Ctrl-b` and an arrow key move
 ## Related
 
 - [tmux split panes](/blog/tmux-split-panes): build a grid by hand
+- [tmux kill session](/blog/tmux-kill-session): end sessions you no longer need
+- [tmux cheat sheet](/blog/tmux-cheat-sheet): every default key on one page
 - [Run Claude Code in tmux](/guide/tmux): claudegrid's tmux backend
 - [Claude Code worktrees](/claude-code-worktree): one branch per agent
 - [Claude Code over SSH](https://projects.halit.org/claude-code-vps/blog/claude-code-ssh): the server setup around it
